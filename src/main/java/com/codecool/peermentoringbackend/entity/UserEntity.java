@@ -21,6 +21,12 @@ public class UserEntity {
     private Long id;
 
     @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @Column
     private String username;
 
     @Column
