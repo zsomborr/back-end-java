@@ -32,6 +32,7 @@ public class RegistrationService {
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
         userRepository.save(userEntity);
+        return "success";
     }
 
 }
