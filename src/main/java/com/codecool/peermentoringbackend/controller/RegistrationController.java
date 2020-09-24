@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping(value = "/reg", method = {RequestMethod.GET, RequestMethod.POST})
+@RequestMapping("/reg")
 public class RegistrationController {
 
     @Autowired
