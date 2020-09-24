@@ -1,11 +1,10 @@
 package com.codecool.peermentoringbackend.controller;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
+import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +21,9 @@ public class QuestionController {
         return questionService.getAll();
     }
 
+    @PostMapping("")
+    public void addQuestion(@RequestBody QuestionModel questionModel) {
+        questionService.addNewQuestion(questionModel);
+    }
 
 }
