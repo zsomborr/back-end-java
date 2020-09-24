@@ -1,6 +1,7 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.RegResponse;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class RegistrationService {
         passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    public String handleRegistration(UserModel userModel) {
-        if(userRepository.existsByEmail(userModel.getEmail())) return "this email is already registered";
-        if (userRepository.existsByUsername(userModel.getUsername())) return "this username is already taken";
+    public RegResponse handleRegistration(UserModel userModel) {
+        if(userRepository.existsByEmail(userModel.getEmail())) return new RegResponse(false, "this email is already registered");
+        if (userRepository.existsByUsername(userModel.getUsername())) return new RegResponse(false, "this username is already taken");
 
         UserEntity userEntity = UserEntity.builder()
                 .email(userModel.getEmail())
@@ -37,7 +38,7 @@ public class RegistrationService {
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
         userRepository.save(userEntity);
-        return "success";
+        return new RegResponse(true, "success");
     }
 
 }
