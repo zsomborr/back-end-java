@@ -3,7 +3,9 @@ package com.codecool.peermentoringbackend.service;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,15 +21,22 @@ public class QuestionService {
         return questionRepository.findAll();
     }
 
-    public void addNewQuestion(QuestionModel questionModel) {
-        QuestionEntity question = QuestionEntity.builder()
-                .title(questionModel.getTitle())
-                .description(questionModel.getDescription())
-                .userId(1L)
-                .submissionTime(LocalDateTime.now())
-                .build();
+    public boolean addNewQuestion(QuestionModel questionModel) {
 
-        questionRepository.save(question);
+        try {
+            QuestionEntity question = QuestionEntity.builder()
+                    .title(questionModel.getTitle())
+                    .description(questionModel.getDescription())
+                    .userId(questionModel.getUserId())
+                    .submissionTime(LocalDateTime.now())
+                    .build();
+
+            questionRepository.save(question);
+        }
+        catch (DataIntegrityViolationException e) {
+            return false;
+        }
+return true;
     }
 
     public QuestionEntity getQuestionById(Long questionId) {
