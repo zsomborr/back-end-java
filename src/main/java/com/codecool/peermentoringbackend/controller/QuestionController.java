@@ -26,4 +26,9 @@ public class QuestionController {
         questionService.addNewQuestion(questionModel);
     }
 
+    @GetMapping("/{questionId}")
+    public QuestionEntity getQuestionById(@PathVariable Long questionId) {
+        return questionService.getQuestionById(questionId);
+    }
+
 }

@@ -29,4 +29,8 @@ public class QuestionService {
 
         questionRepository.save(question);
     }
+
+    public QuestionEntity getQuestionById(Long questionId) {
+        return questionRepository.findQuestionEntityById(questionId);
+    }
 }
