@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,9 @@ public class UserEntity {
 
     @Column
     private String password;
+
+    @Column
+    private LocalDateTime registrationDate;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
@@ -21,7 +22,7 @@ public class RegistrationService {
         passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    public String handleRegistration(String username, String email, String password) {
+    public String handleRegistration(String username, String email, String password, String firstName, String lastName) {
         if(userRepository.existsByEmail(email)) return "this email is already registered";
         if (userRepository.existsByUsername(username)) return "this username is already taken";
 
@@ -29,6 +30,9 @@ public class RegistrationService {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .username(username)
+                .firstName(firstName)
+                .lastName(lastName)
+                .registrationDate(LocalDateTime.now())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
         userRepository.save(userEntity);
