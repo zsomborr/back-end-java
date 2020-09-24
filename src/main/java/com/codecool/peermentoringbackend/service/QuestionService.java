@@ -1,8 +1,10 @@
 package com.codecool.peermentoringbackend.service;
 
+import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.model.QAndAsModel;
 import com.codecool.peermentoringbackend.model.QuestionModel;
+import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     public List<QuestionEntity> getAll() {
         return questionRepository.findAll();
@@ -42,15 +47,9 @@ public class QuestionService {
 return true;
     }
 
-    public QuestionEntity getQuestionById(Long questionId) {
-        return questionRepository.findQuestionEntityById(questionId);
-    }
 
     public QAndAsModel getQuestionByIdAndAnswers(Long questionId) {
-        List<String> answers = new ArrayList<>();
-        answers.add("helo");
-        answers.add("belo");
-        answers.add("dilo");
-        return new QAndAsModel(questionRepository.findQuestionEntityById(questionId), answers);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
+        return new QAndAsModel(questionRepository.findQuestionEntityById(questionId), answerEntities);
     }
 }

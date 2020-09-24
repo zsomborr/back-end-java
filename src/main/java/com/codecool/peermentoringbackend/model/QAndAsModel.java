@@ -1,5 +1,6 @@
 package com.codecool.peermentoringbackend.model;
 
+import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,5 +15,5 @@ public class QAndAsModel {
 
     private QuestionEntity question;
 
-    private List<String> answers;
+    private List<AnswerEntity> answers;
 }
