@@ -1,6 +1,7 @@
 package com.codecool.peermentoringbackend.controller;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
+import com.codecool.peermentoringbackend.model.QAndAsModel;
 import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.model.RegResponse;
 import com.codecool.peermentoringbackend.model.UserModel;
@@ -45,8 +46,8 @@ public class QuestionController {
 
 
     @GetMapping("/{questionId}")
-    public QuestionEntity getQuestionById(@PathVariable Long questionId) {
-        return questionService.getQuestionById(questionId);
+    public QAndAsModel getQuestionByIdAndAnswers(@PathVariable Long questionId) {
+        return questionService.getQuestionByIdAndAnswers(questionId);
     }
 
 }
