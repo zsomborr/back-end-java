@@ -25,9 +25,9 @@ public class RegistrationController {
 
         RegResponse regResponse = registrationService.handleRegistration(userModel);
         if (regResponse.isSuccess()) {
-            response.setStatus(400);
-        } else {
             response.setStatus(200);
+        } else {
+            response.setStatus(400);
         }
         response.getWriter().println(regResponse.getMessage());
     }
