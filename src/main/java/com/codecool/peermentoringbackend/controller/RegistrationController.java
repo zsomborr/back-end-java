@@ -17,6 +17,6 @@ public class RegistrationController {
 
     @PostMapping(value = "/registration")
     public String doRegistration(@RequestBody UserModel userModel) {
-        return registrationService.handleRegistration(userModel.getUsername(), userModel.getEmail(), userModel.getEmail(), userModel.getFirstName(), userModel.getLastName());
+        return registrationService.handleRegistration(userModel);
     }
 }
