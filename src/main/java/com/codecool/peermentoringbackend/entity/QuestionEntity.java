@@ -31,6 +31,6 @@ public class QuestionEntity {
     @Column
     private LocalDateTime submissionTime;
 
-    @Column
+    @Column(nullable = false)
     private Long userId;
 }
