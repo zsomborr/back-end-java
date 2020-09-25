@@ -26,12 +26,15 @@ public class UserEntity {
     @Column
     private String lastName;
 
-    @Column
+    @NonNull
+    @Column(unique = true)
     private String username;
 
-    @Column
+    @NonNull
+    @Column(unique = true)
     private String email;
 
+    @NonNull
     @Column
     private String password;
 
