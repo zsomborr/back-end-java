@@ -1,10 +1,6 @@
 package com.codecool.peermentoringbackend.service.validation;
 
 import com.codecool.peermentoringbackend.model.UserModel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,17 +9,17 @@ public class ValidatorService {
 
     //checks first or last name for length (min and max) and containing characters
     public boolean validateName(String name, int minLength, int maxLength) {
-        return isAlpha(name) && name.length()>minLength && name.length()<maxLength;
+        return isAlpha(name) && name.length() >= minLength && name.length() <= maxLength;
     }
 
     //checks password for min and max length
     public boolean validatePassword(String password, int minLength, int maxLength) {
-        return password.length()>minLength && password.length()<maxLength;
+        return password.length() >= minLength && password.length() <= maxLength;
     }
 
     //checks username for min and max length
     public boolean validateUsername(String username, int minLength, int maxLength) {
-        return true;
+        return username.length() >= minLength && username.length() <= maxLength;
     }
 
     public boolean validateRegistration(UserModel userModel, int minLengthName, int maxLengthName, int minLengthPassword, int maxLengthPassword, int minLengthUsername, int maxLengthUsername) {
