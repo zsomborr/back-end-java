@@ -9,6 +9,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -25,6 +27,12 @@ public class RegistrationService {
     }
 
     public RegResponse handleRegistration(UserModel userModel) {
+
+        EmailValidator validator = EmailValidator.getInstance();
+
+
+        if (!validator.isValid(userModel.getEmail())) return new RegResponse(false, "e-mail format not valid");
+
         if(userRepository.existsByEmail(userModel.getEmail())) return new RegResponse(false, "this email is already registered");
         if (userRepository.existsByUsername(userModel.getUsername())) return new RegResponse(false, "this username is already taken");
 
