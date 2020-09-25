@@ -5,6 +5,8 @@ import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.model.AnswerModel;
 import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
+import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,12 @@ public class AnswerService {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId) {
         return answerRepository.findAnswerEntitiesByQuestionId(questionId);
     }
@@ -26,15 +34,15 @@ public class AnswerService {
 
         try {
             AnswerEntity answerEntity = AnswerEntity.builder()
-                    .userId(answerModel.getUserId())
-                    .questionId(answerModel.getQuestionId())
                     .content(answerModel.getContent())
                     .submissionTime(LocalDateTime.now())
+                    .user(userRepository.findDistinctById(answerModel.getUserId()))
+                    .question(questionRepository.findDistinctById(answerModel.getQuestionId()))
                     .build();
 
             answerRepository.save(answerEntity);
         }
-        catch (DataIntegrityViolationException e) {
+        catch (NullPointerException e) {
             return false;
         }
         return true;

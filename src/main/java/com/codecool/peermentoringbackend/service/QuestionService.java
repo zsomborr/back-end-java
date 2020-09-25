@@ -6,6 +6,7 @@ import com.codecool.peermentoringbackend.model.QAndAsModel;
 import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +26,9 @@ public class QuestionService {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<QuestionEntity> getAll() {
         return questionRepository.findAll();
     }
@@ -35,13 +39,13 @@ public class QuestionService {
             QuestionEntity question = QuestionEntity.builder()
                     .title(questionModel.getTitle())
                     .description(questionModel.getDescription())
-                    .userId(questionModel.getUserId())
                     .submissionTime(LocalDateTime.now())
+                    .user(userRepository.findDistinctById(questionModel.getUserId()))
                     .build();
 
             questionRepository.save(question);
         }
-        catch (DataIntegrityViolationException e) {
+        catch (NullPointerException e) {
             return false;
         }
 return true;
