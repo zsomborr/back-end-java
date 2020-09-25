@@ -1,5 +1,7 @@
 package com.codecool.peermentoringbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,11 +33,13 @@ public class QuestionEntity {
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private UserEntity user;
 
     @Singular
     @OneToMany(mappedBy = "question", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     Set<AnswerEntity> answers = new HashSet<>();
 }
