@@ -40,7 +40,7 @@ public class RegistrationService {
             return new RegResponse(false, "this email is already registered");
         if (userRepository.existsByUsername(userModel.getUsername()))
             return new RegResponse(false, "this username is already taken");
-        if (!validatorService.validateRegistration(userModel, 2, 20, 8, 20, 2, 20))
+        if (!validatorService.validateRegistration(userModel, 2, 20,  2, 20))
             return new RegResponse(false, "registration failed due to invalid credentials");
 
         UserEntity userEntity = UserEntity.builder()
