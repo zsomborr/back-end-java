@@ -55,7 +55,6 @@ public class LoginController {
             model.put("username", username);
             model.put("roles", roles);
 
-
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(model);
         } catch (AuthenticationException e) {
