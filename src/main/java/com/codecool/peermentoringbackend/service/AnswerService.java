@@ -30,13 +30,13 @@ public class AnswerService {
         return answerRepository.findAnswerEntitiesByQuestionId(questionId);
     }
 
-    public boolean addNewAnswer(AnswerModel answerModel) {
+    public boolean addNewAnswer(AnswerModel answerModel, String username) {
 
         try {
             AnswerEntity answerEntity = AnswerEntity.builder()
                     .content(answerModel.getContent())
                     .submissionTime(LocalDateTime.now())
-                    .user(userRepository.findDistinctById(answerModel.getUserId()))
+                    .user(userRepository.findDistinctByUsername(username))
                     .question(questionRepository.findDistinctById(answerModel.getQuestionId()))
                     .build();
 

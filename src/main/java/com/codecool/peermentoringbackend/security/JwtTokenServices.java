@@ -93,4 +93,20 @@ public class JwtTokenServices {
         }
         return new UsernamePasswordAuthenticationToken(username, "", authorities);
     }
+
+    public String getUsernameFromToken(HttpServletRequest req) {
+        String mycookie = null;
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("authentication")) {
+                    mycookie = cookie.getValue();
+                    Claims body = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(mycookie).getBody();
+                    return body.getSubject();
+                }
+            }
+        }
+
+        return null;
+    }
 }
