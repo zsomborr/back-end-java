@@ -13,4 +13,5 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> 
     QuestionEntity findQuestionEntityById(Long id);
 
     QuestionEntity findDistinctById(Long id);
+
 }
