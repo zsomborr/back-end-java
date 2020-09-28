@@ -33,14 +33,14 @@ public class QuestionService {
         return questionRepository.findAll();
     }
 
-    public boolean addNewQuestion(QuestionModel questionModel) {
+    public boolean addNewQuestion(QuestionModel questionModel, String username) {
 
         try {
             QuestionEntity question = QuestionEntity.builder()
                     .title(questionModel.getTitle())
                     .description(questionModel.getDescription())
                     .submissionTime(LocalDateTime.now())
-                    .user(userRepository.findDistinctById(questionModel.getUserId()))
+                    .user(userRepository.findDistinctByUsername(username))
                     .build();
 
             questionRepository.save(question);

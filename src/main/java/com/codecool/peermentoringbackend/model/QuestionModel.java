@@ -12,9 +12,6 @@ import javax.persistence.Column;
 @AllArgsConstructor
 public class QuestionModel {
 
-
-    private Long userId;
-
     private String title;
 
     private String description;

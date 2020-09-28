@@ -5,10 +5,12 @@ import com.codecool.peermentoringbackend.model.QAndAsModel;
 import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.model.RegResponse;
 import com.codecool.peermentoringbackend.model.UserModel;
+import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import com.codecool.peermentoringbackend.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -20,21 +22,21 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    private JwtTokenServices jwtTokenServices;
 
     @GetMapping("")
-    public List<QuestionEntity> getAllNotes() {
+    public List<QuestionEntity> getAllQuestion() {
         return questionService.getAll();
     }
 
-  /*  @PostMapping("")
-    public void addQuestion(@RequestBody QuestionModel questionModel) {
-        questionService.addNewQuestion(questionModel);
-    } */
 
     @PostMapping("")
-    public void addQuestion(HttpServletResponse response, @RequestBody QuestionModel questionModel) throws IOException {
+    public void addQuestion(HttpServletRequest request, HttpServletResponse response, @RequestBody QuestionModel questionModel) throws IOException {
 
-        boolean success = questionService.addNewQuestion(questionModel);
+        String username = jwtTokenServices.getUsernameFromToken(request);
+
+        boolean success = questionService.addNewQuestion(questionModel, username);
         if (success) {
             response.setStatus(200);
         } else {
