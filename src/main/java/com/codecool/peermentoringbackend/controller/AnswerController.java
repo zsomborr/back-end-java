@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/answers")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AnswerController {
 
     @Autowired

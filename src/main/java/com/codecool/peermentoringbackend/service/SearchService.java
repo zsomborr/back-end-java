@@ -22,6 +22,7 @@ public class SearchService {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT distinct q FROM QuestionEntity q WHERE ");
 
+
         for(int i =0; i<words.size(); i++){
 
             whereCause.add(" q.title like " + ":word" + i + " or q.description like " + ":word" + i);
