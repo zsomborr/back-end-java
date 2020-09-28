@@ -12,10 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -97,6 +94,7 @@ public class JwtTokenServices {
     public String getUsernameFromToken(HttpServletRequest req) {
         String mycookie = null;
         Cookie[] cookies = req.getCookies();
+
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("authentication")) {
@@ -109,4 +107,5 @@ public class JwtTokenServices {
 
         return null;
     }
+
 }

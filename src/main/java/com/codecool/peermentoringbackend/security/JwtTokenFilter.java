@@ -33,9 +33,15 @@ public class JwtTokenFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        ((HttpServletResponse) res).setHeader("Access-Control-Allow-Origin", "*");
+
+        String origin = ((HttpServletRequest) req).getHeader("origin");
+
+
+        ((HttpServletResponse) res).setHeader("Access-Control-Allow-Origin", origin);
+        ((HttpServletResponse) res).setHeader("Access-Control-Allow-Credentials", "true");
         ((HttpServletResponse) res).setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         ((HttpServletResponse) res).setHeader("Access-Control-Max-Age", "86400");
+
 
         response.addHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
 //
