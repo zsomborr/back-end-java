@@ -42,4 +42,15 @@ public class QuestionEntity {
     @EqualsAndHashCode.Exclude
     @JsonIgnore
     Set<AnswerEntity> answers = new HashSet<>();
+
+    @Transient
+    private Long userId_;
+
+    @Transient
+    private String username;
+
+    public void setUserData() {
+        this.userId_ = user.getId();
+        this.username = user.getUsername();
+    }
 }
