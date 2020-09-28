@@ -26,10 +26,6 @@ public class QuestionController {
         return questionService.getAll();
     }
 
-  /*  @PostMapping("")
-    public void addQuestion(@RequestBody QuestionModel questionModel) {
-        questionService.addNewQuestion(questionModel);
-    } */
 
     @PostMapping("")
     public void addQuestion(HttpServletResponse response, @RequestBody QuestionModel questionModel) throws IOException {
