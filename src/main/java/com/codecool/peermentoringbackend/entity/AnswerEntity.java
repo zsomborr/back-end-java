@@ -1,6 +1,8 @@
 package com.codecool.peermentoringbackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,11 +30,30 @@ public class AnswerEntity {
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private UserEntity user;
 
     @NonNull
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private QuestionEntity question;
+
+
+    @Transient
+    private Long userId_;
+
+    @Transient
+    private String username;
+
+    @Transient
+    private Long questionId_;
+
+    public void setTransientData() {
+        this.userId_ = user.getId();
+        this.username = user.getUsername();
+        this.questionId_ = question.getId();
+    }
+
 }

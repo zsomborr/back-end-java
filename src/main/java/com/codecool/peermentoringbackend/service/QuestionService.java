@@ -2,6 +2,8 @@ package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
+import com.codecool.peermentoringbackend.model.PublicAnswerModel;
+import com.codecool.peermentoringbackend.model.PublicQuestionModel;
 import com.codecool.peermentoringbackend.model.QAndAsModel;
 import com.codecool.peermentoringbackend.model.QuestionModel;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
@@ -30,7 +32,14 @@ public class QuestionService {
     private UserRepository userRepository;
 
     public List<QuestionEntity> getAll() {
-        return questionRepository.findAll();
+
+        List<QuestionEntity> questionEntities = questionRepository.findAll();
+
+        for (QuestionEntity question : questionEntities) {
+            question.setUserData();
+        }
+
+        return questionEntities;
     }
 
     public boolean addNewQuestion(QuestionModel questionModel, String username) {
@@ -54,6 +63,13 @@ return true;
 
     public QAndAsModel getQuestionByIdAndAnswers(Long questionId) {
         List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
-        return new QAndAsModel(questionRepository.findQuestionEntityById(questionId), answerEntities);
+        QuestionEntity questionEntityById = questionRepository.findQuestionEntityById(questionId);
+        questionEntityById.setUserData();
+
+        for (AnswerEntity answer: answerEntities) {
+            answer.setTransientData();
+        }
+
+        return new QAndAsModel(questionEntityById, answerEntities);
     }
 }
