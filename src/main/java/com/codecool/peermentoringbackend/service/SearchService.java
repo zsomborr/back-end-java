@@ -24,11 +24,11 @@ public class SearchService {
 
         for(int i =0; i<words.size(); i++){
 
-            whereClause.add("q.title like " + ":word" + i + " or q.description like " + ":word" + i);
+            whereClause.add("lower(q.title) like " + "lower(:word" + i + ") or lower(q.description) like " + "lower(:word" + i+ ")");
             parameterMap.put("word"+i, "%" +words.get(i) + "%");
         }
 
-        queryBuilder.append(String.join(" or ", whereClause));
+        queryBuilder.append(String.join(" and ", whereClause));
         Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
 
         for(String key :parameterMap.keySet()) {
