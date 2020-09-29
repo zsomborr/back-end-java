@@ -11,6 +11,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,23 @@ public class LoginController {
     public LoginController(AuthenticationManager authenticationManager, JwtTokenServices jwtTokenServices) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenServices = jwtTokenServices;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/authentication")
+    public void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String tokenFromRequest = jwtTokenServices.getTokenFromRequest(request);
+
+        boolean authenticated = jwtTokenServices.validateToken(tokenFromRequest);
+
+        if (authenticated) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(401);
+            response.getWriter().println("user not authenticated");
+        }
+
     }
 
 

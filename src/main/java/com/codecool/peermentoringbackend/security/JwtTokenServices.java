@@ -46,7 +46,7 @@ public class JwtTokenServices {
                 .compact();
     }
 
-    String getTokenFromRequest(HttpServletRequest req) {
+    public String getTokenFromRequest(HttpServletRequest req) {
         String mycookie = null;
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
@@ -61,7 +61,7 @@ public class JwtTokenServices {
         return null;
     }
 
-    boolean validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             if (claims.getBody().getExpiration().before(new Date())) {
