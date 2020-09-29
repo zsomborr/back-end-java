@@ -20,7 +20,7 @@ public class AnswerEntity {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column(columnDefinition="text")
     private String content;
 
     @Column

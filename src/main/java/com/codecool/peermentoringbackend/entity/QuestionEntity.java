@@ -20,10 +20,11 @@ public class QuestionEntity {
     @GeneratedValue
     private Long id;
 
-    @Column
+
+    @Column(columnDefinition="text")
     private String title;
 
-    @Column
+    @Column(columnDefinition="text")
     private String description;
 
     @Column
