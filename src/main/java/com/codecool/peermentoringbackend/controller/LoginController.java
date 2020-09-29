@@ -33,7 +33,7 @@ public class LoginController {
         this.jwtTokenServices = jwtTokenServices;
     }
 
-    @ResponseStatus(HttpStatus.OK)
+
     @GetMapping(value = "/authentication")
     public void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -42,7 +42,8 @@ public class LoginController {
         boolean authenticated = jwtTokenServices.validateToken(tokenFromRequest);
 
         if (authenticated) {
-            response.setStatus(200);
+           response.setStatus(200);
+
         } else {
             response.setStatus(401);
             response.getWriter().println("user not authenticated");
@@ -66,7 +67,7 @@ public class LoginController {
             String token = jwtTokenServices.createToken(username, roles);
             ResponseCookie cookie = ResponseCookie
                     .from("authentication", token)
-                    .maxAge(36000000)  //10 hrs
+                    .maxAge(3600)  //18 hrs
                     .path("/").httpOnly(false).secure(false).build();
 
 
