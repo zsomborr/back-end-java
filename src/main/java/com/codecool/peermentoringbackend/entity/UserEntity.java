@@ -1,13 +1,13 @@
 package com.codecool.peermentoringbackend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -21,13 +21,37 @@ public class UserEntity {
     private Long id;
 
     @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @NonNull
+    @Column(unique = true)
     private String username;
 
-    @Column
+    @NonNull
+    @Column(unique = true)
     private String email;
 
+    @NonNull
     @Column
     private String password;
+
+    @Column
+    private LocalDateTime registrationDate;
+
+    @Singular
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<QuestionEntity> questions = new HashSet<>();
+
+    @Singular
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<AnswerEntity> answers = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
