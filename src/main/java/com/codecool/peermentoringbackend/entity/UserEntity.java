@@ -56,4 +56,14 @@ public class UserEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+    @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<TechnologyEntity> technologyTags = new HashSet<>();
+
+    @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<ProjectEntity> projectTags = new HashSet<>();
 }
