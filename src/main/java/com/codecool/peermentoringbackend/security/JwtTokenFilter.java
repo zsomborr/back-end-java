@@ -44,17 +44,13 @@ public class JwtTokenFilter extends GenericFilterBean {
 
 
         response.addHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
-//
+
         if ("OPTIONS".equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(req, res);
         } else {
             filterChain.doFilter(req, res);
         }
-
-
-//
-//       filterChain.doFilter(req, res);
 
     }
 

@@ -38,6 +38,7 @@ public class QuestionController {
 
         boolean success = questionService.addNewQuestion(questionModel, username);
         if (success) {
+
             response.setStatus(200);
         } else {
             response.setStatus(400);

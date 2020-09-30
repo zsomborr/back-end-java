@@ -67,7 +67,7 @@ public class LoginController {
             String token = jwtTokenServices.createToken(username, roles);
             ResponseCookie cookie = ResponseCookie
                     .from("authentication", token)
-                    .maxAge(3600)  //18 hrs
+                    .maxAge(3600)  //1 hr
                     .path("/").httpOnly(false).secure(false).build();
 
 

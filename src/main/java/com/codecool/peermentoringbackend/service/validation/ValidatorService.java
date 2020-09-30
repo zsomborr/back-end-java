@@ -10,17 +10,14 @@ import java.util.regex.Pattern;
 public class ValidatorService {
 
 
-    //checks first or last name for length (min and max) and containing characters
     public boolean validateName(String name, int minLength, int maxLength) {
         return isAlpha(name) && name.length() >= minLength && name.length() <= maxLength;
     }
 
-    //checks password for min and max length
     public boolean validatePassword(String password) {
         return isValidPasswordSecure(password);
     }
 
-    //checks username for min and max length
     public boolean validateUsername(String username, int minLength, int maxLength) {
         return username.length() >= minLength && username.length() <= maxLength && isAlphaNumWithUnderscore(username);
     }
@@ -44,14 +41,6 @@ public class ValidatorService {
     }
 
     private boolean isValidPasswordSecure(String password) {
-       /* String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (password == null) {
-            return false;
-        }
-        Matcher m = pattern.matcher(password);
-       return m.matches(); */
-
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$");
     }
 }

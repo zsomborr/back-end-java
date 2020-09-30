@@ -23,18 +23,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-
-    /**
-     * Loads the user from the DB and converts it to Spring Security's internal User object.
-     * Spring will call this code to retrieve a user upon login from the DB.
-     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username: " + username + " not found"));
-
-
 
         if (user == null) {
             throw new UsernameNotFoundException("Username: " + username + " not found");
