@@ -84,4 +84,18 @@ public class TagService {
 
         return new TagsModel(projectTags, technologyTags);
     }
+
+    public void removeProjectTagFromUser(ProjectEntity tag, String username) {
+        ProjectEntity projectEntityByProjectTag = projectTagRepository.findProjectEntityByProjectTag(tag.getProjectTag());
+        UserEntity distinctByUsername = userRepository.findDistinctByUsername(username);
+        projectEntityByProjectTag.removeUser(distinctByUsername);
+        projectTagRepository.save(projectEntityByProjectTag);
+    }
+
+    public void removeTechnologyTagFromUser(TechnologyEntity tag, String username) {
+        TechnologyEntity technologyEntity = technologyTagRepository.findTechnologyEntityByTechnologyTag(tag.getTechnologyTag());
+        UserEntity userEntity = userRepository.findDistinctByUsername(username);
+        technologyEntity.removeUser(userEntity);
+        technologyTagRepository.save(technologyEntity);
+    }
 }

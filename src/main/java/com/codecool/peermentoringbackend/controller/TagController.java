@@ -72,4 +72,20 @@ public class TagController {
         return tagService.getAllTags();
     }
 
+    @PostMapping("/remove-project-tag")
+    public void removeProjectTagFromUser(HttpServletRequest request, HttpServletResponse response, @RequestBody ProjectEntity tag) {
+
+        String username = jwtTokenServices.getUsernameFromToken(request);
+
+        tagService.removeProjectTagFromUser(tag, username);
+    }
+
+    @PostMapping("/remove-technology-tag")
+    public void removeTechnologyTagFromUser(HttpServletRequest request, HttpServletResponse response, @RequestBody TechnologyEntity tag) {
+
+        String username = jwtTokenServices.getUsernameFromToken(request);
+
+        tagService.removeTechnologyTagFromUser(tag, username);
+    }
+
 }

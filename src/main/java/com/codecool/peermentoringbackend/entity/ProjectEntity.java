@@ -32,4 +32,9 @@ public class ProjectEntity {
         this.userEntities.add(userEntity);
         userEntity.getProjectTags().add(this);
     }
+
+    public void removeUser(UserEntity userEntity) {
+        this.userEntities.remove(userEntity);
+        userEntity.getProjectTags().remove(this);
+    }
 }

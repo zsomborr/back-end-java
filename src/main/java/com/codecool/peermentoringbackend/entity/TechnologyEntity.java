@@ -31,4 +31,9 @@ public class TechnologyEntity {
         this.userEntities.add(userEntity);
         userEntity.getTechnologyTags().add(this);
     }
+
+    public void removeUser(UserEntity userEntity) {
+        this.userEntities.remove(userEntity);
+        userEntity.getTechnologyTags().remove(this);
+    }
 }
