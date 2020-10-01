@@ -4,6 +4,7 @@ package com.codecool.peermentoringbackend.controller;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.LoggedUserModel;
 import com.codecool.peermentoringbackend.model.PublicUserModel;
+import com.codecool.peermentoringbackend.model.UserDataQAndAModel;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import com.codecool.peermentoringbackend.service.UserService;
@@ -63,5 +64,11 @@ public class UserController {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         userService.savePersonalData(publicUserModel.getFirstName(), publicUserModel.getLastName(), publicUserModel.getCountry(), publicUserModel.getCity(), publicUserModel.getModule(), userEntity.getId());
 
+    }
+
+    @GetMapping(value = "/get-user-private-page", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDataQAndAModel getLoggedInUserPage(HttpServletRequest request) {
+
+        return userService.getLoggedInUserPage(request);
     }
 }

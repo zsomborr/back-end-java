@@ -1,15 +1,8 @@
 package com.codecool.peermentoringbackend.service;
 
-import com.codecool.peermentoringbackend.entity.ProjectEntity;
-import com.codecool.peermentoringbackend.entity.TechnologyEntity;
-import com.codecool.peermentoringbackend.entity.UserEntity;
-import com.codecool.peermentoringbackend.model.LoggedUserModel;
-import com.codecool.peermentoringbackend.model.Module_;
-import com.codecool.peermentoringbackend.model.PublicUserModel;
-import com.codecool.peermentoringbackend.model.UserModel;
-import com.codecool.peermentoringbackend.repository.ProjectTagRepository;
-import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
-import com.codecool.peermentoringbackend.repository.UserRepository;
+import com.codecool.peermentoringbackend.entity.*;
+import com.codecool.peermentoringbackend.model.*;
+import com.codecool.peermentoringbackend.repository.*;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -39,6 +32,12 @@ public class UserService {
 
     @Autowired
     JwtTokenServices jwtTokenServices;
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    AnswerRepository answerRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -130,4 +129,28 @@ public class UserService {
 
     }
 
+    public UserDataQAndAModel getLoggedInUserPage(HttpServletRequest request) {
+        String username = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(username);
+        List<QuestionEntity> userQuestions = questionRepository.findQuestionEntitiesByUser(userEntity);
+
+        for (QuestionEntity question : userQuestions) {
+            question.setUserData();
+        }
+        List<AnswerEntity> userAnswers = answerRepository.findAnswerEntitiesByUser(userEntity);
+
+        for (AnswerEntity answer : userAnswers) {
+            answer.setTransientData();
+        }
+        return UserDataQAndAModel.builder()
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .city(userEntity.getCity())
+                .country(userEntity.getCountry())
+                .module(userEntity.getModule())
+                .username(userEntity.getUsername())
+                .userQuestions(userQuestions)
+                .userAnswers(userAnswers)
+                .build();
+    }
 }
