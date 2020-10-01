@@ -37,7 +37,7 @@ public class TagController {
             response.setStatus(200);
         } else {
             response.setStatus(400);
-            response.getWriter().println("handle error");
+            response.getWriter().println("projectTag sould not be null");
         }
 
     }
@@ -54,7 +54,7 @@ public class TagController {
             response.setStatus(200);
         } else {
             response.setStatus(400);
-            response.getWriter().println("handle error");
+            response.getWriter().println("technologyTag sould not be null");
         }
 
     }
