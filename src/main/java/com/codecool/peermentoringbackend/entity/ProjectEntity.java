@@ -18,6 +18,7 @@ public class ProjectEntity {
     @GeneratedValue
     private Long id;
 
+    @NonNull
     @Column
     private String projectTag;
 

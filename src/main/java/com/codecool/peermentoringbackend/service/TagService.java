@@ -3,6 +3,7 @@ package com.codecool.peermentoringbackend.service;
 import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.TagsModel;
 import com.codecool.peermentoringbackend.repository.ProjectTagRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class TagService {
@@ -65,5 +67,13 @@ public class TagService {
             return true;
         }
 
+    }
+
+    public TagsModel getLoggedInUserTags(String username) {
+
+        UserEntity distinctByUsername = userRepository.findDistinctByUsername(username);
+        List<ProjectEntity> projectEntitiesByUserEntities = projectTagRepository.findProjectEntitiesByUserEntities(distinctByUsername);
+        List<TechnologyEntity> technologyEntitiesByUserEntities = technologyTagRepository.findTechnologyEntitiesByUserEntities(distinctByUsername);
+        return new TagsModel(projectEntitiesByUserEntities, technologyEntitiesByUserEntities);
     }
 }
