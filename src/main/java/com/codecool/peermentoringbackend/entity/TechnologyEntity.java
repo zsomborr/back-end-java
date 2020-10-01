@@ -18,6 +18,7 @@ public class TechnologyEntity {
     @GeneratedValue
     private Long id;
 
+    @NonNull
     @Column
     private String technologyTag;
 
