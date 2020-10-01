@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.HTML;
 import java.io.IOException;
 
 @RestController
@@ -64,6 +65,11 @@ public class TagController {
         String username = jwtTokenServices.getUsernameFromToken(request);
 
         return tagService.getLoggedInUserTags(username);
+    }
+
+    @GetMapping("")
+    public TagsModel getAllTags() {
+        return tagService.getAllTags();
     }
 
 }

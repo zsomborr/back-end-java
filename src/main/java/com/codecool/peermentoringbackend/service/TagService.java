@@ -76,4 +76,12 @@ public class TagService {
         List<TechnologyEntity> technologyEntitiesByUserEntities = technologyTagRepository.findTechnologyEntitiesByUserEntities(distinctByUsername);
         return new TagsModel(projectEntitiesByUserEntities, technologyEntitiesByUserEntities);
     }
+
+    public TagsModel getAllTags() {
+
+        List<ProjectEntity> projectTags = projectTagRepository.findAll();
+        List<TechnologyEntity> technologyTags = technologyTagRepository.findAll();
+
+        return new TagsModel(projectTags, technologyTags);
+    }
 }

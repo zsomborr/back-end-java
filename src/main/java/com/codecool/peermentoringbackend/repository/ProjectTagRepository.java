@@ -14,4 +14,5 @@ public interface ProjectTagRepository extends JpaRepository<ProjectEntity, Long>
     ProjectEntity findProjectEntityByProjectTag(String projectTag);
 
     List<ProjectEntity> findProjectEntitiesByUserEntities(UserEntity userEntity);
+
 }
