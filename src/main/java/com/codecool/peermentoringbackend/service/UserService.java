@@ -3,18 +3,22 @@ package com.codecool.peermentoringbackend.service;
 import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.LoggedUserModel;
 import com.codecool.peermentoringbackend.model.Module_;
 import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.repository.ProjectTagRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
+import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,11 +37,17 @@ public class UserService {
     @Autowired
     TechnologyTagRepository technologyTagRepository;
 
+    @Autowired
+    JwtTokenServices jwtTokenServices;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     public PublicUserModel getPublicUserDataByUserId(Long userId) {
         UserEntity userEntity = userRepository.findDistinctById(userId);
+
+        if(userEntity == null) return null;
+
         List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
 
@@ -51,6 +61,25 @@ public class UserService {
                 .username(userEntity.getUsername())
                 .projectTags(projectTags)
                 .technologyTags(technologyTags)
+                .build();
+    }
+
+    public LoggedUserModel getLoggedInUserData(HttpServletRequest request) {
+        String username = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(username);
+        List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
+        List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
+        return LoggedUserModel.builder()
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .city(userEntity.getCity())
+                .country(userEntity.getCountry())
+                .module(userEntity.getModule())
+                .username(userEntity.getUsername())
+                .projectTags(projectTags)
+                .technologyTags(technologyTags)
+                .allProjectTags(projectTagRepository.findAll())
+                .allTechnologyTags(technologyTagRepository.findAll())
                 .build();
     }
 
