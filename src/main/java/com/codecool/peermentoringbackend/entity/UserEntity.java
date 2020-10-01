@@ -1,5 +1,6 @@
 package com.codecool.peermentoringbackend.entity;
 
+import com.codecool.peermentoringbackend.model.Module_;
 import lombok.*;
 
 import javax.persistence.*;
@@ -41,6 +42,15 @@ public class UserEntity {
     @Column
     private LocalDateTime registrationDate;
 
+    @Column
+    private String country;
+
+    @Column
+    private String city;
+
+    @Column
+    private Module_ module;
+
     @Singular
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @ToString.Exclude
@@ -56,4 +66,6 @@ public class UserEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+
 }
