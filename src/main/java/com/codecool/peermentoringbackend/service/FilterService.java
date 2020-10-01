@@ -30,7 +30,7 @@ public class FilterService {
         }
     }
 
-    public Optional<UserEntity> getMentorByName(String username) {
-        return userRepository.findByUsername(username);
+    public UserEntity getMentorByName(String username) {
+        return userRepository.findDistinctByUsername(username);
     }
 }

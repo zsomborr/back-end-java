@@ -16,11 +16,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUsername(String username);
 
+
     UserEntity findDistinctById(Long id);
 
     UserEntity findDistinctByUsername(String username);
 
-    //boolean existsBy
     @Query("SELECT DISTINCT u FROM UserEntity u INNER JOIN u.technologyTags t INNER JOIN  u.projectTags p")
     List<UserEntity> getIfHasTechAndProjectTags();
 
