@@ -4,6 +4,7 @@ import com.codecool.peermentoringbackend.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
@@ -18,6 +19,16 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findDistinctById(Long id);
 
     UserEntity findDistinctByUsername(String username);
+
+    //boolean existsBy
+    @Query("SELECT DISTINCT u FROM UserEntity u INNER JOIN u.technologyTags t INNER JOIN  u.projectTags p")
+    List<UserEntity> getIfHasTechAndProjectTags();
+
+    @Query("SELECT DISTINCT u FROM UserEntity u INNER JOIN u.technologyTags t")
+    List<UserEntity> getIfHasTechTags();
+
+    @Query("SELECT DISTINCT u FROM UserEntity u WHERE u.technologyTags is not empty OR u.projectTags is not empty")
+    List<UserEntity> getIfHasProjectOrTechTags();
 
 
 }
