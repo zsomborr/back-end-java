@@ -1,9 +1,13 @@
 package com.codecool.peermentoringbackend.service;
 
+import com.codecool.peermentoringbackend.entity.ProjectEntity;
+import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.Module_;
 import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.UserModel;
+import com.codecool.peermentoringbackend.repository.ProjectTagRepository;
+import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +27,31 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProjectTagRepository projectTagRepository;
+
+    @Autowired
+    TechnologyTagRepository technologyTagRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     public PublicUserModel getPublicUserDataByUserId(Long userId) {
         UserEntity userEntity = userRepository.findDistinctById(userId);
-        PublicUserModel userModel = new PublicUserModel(userEntity.getUsername(), userEntity.getLastName(), userEntity.getFirstName(), userEntity.getCountry(), userEntity.getCity(), userEntity.getModule());
-        return userModel;
+        List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
+        List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
+
+        //PublicUserModel userModel = new PublicUserModel(userEntity.getUsername(), userEntity.getLastName(), userEntity.getFirstName(), userEntity.getCountry(), userEntity.getCity(), userEntity.getModule());
+        return PublicUserModel.builder()
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .city(userEntity.getCity())
+                .country(userEntity.getCountry())
+                .module(userEntity.getModule())
+                .username(userEntity.getUsername())
+                .projectTags(projectTags)
+                .technologyTags(technologyTags)
+                .build();
     }
 
 

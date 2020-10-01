@@ -44,10 +44,18 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(value = "/get-public-user-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public PublicUserModel getAllQuestion(@PathVariable Long userId) {
+    @GetMapping(value = "/get-user-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PublicUserModel getUserData(@PathVariable Long userId) {
 
         return userService.getPublicUserDataByUserId(userId);
+    }
+
+    @GetMapping(value = "/get-user-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PublicUserModel getLoggedInUserData(HttpServletRequest request) {
+
+        String username = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(username);
+        return userService.getPublicUserDataByUserId(userEntity.getId());
     }
 
     @PostMapping("/save-personal-data")
