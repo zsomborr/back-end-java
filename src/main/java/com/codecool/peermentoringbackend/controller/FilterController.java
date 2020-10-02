@@ -20,8 +20,7 @@ public class FilterController {
 //    @PostMapping("/get-mentors-by-tags")
 //    public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
 //
-//        projectsAndTechs.getProjects()
-//        return filterService.getMentorsByTags();
+//        return filterService.getMentorsByTags(projectsAndTechs.getProjects(), projectsAndTechs.getTechnologies());
 //
 //    }
 
@@ -35,6 +34,7 @@ public class FilterController {
     private UserEntity getMentorByName(@RequestBody UserModel userModel){
         return filterService.getMentorByName(userModel.getUsername());
     }
+
 
 
 }

@@ -74,7 +74,6 @@ public class UserService {
             jpaQuery.setParameter(key, parameterMap.get(key));
         }
 
-        System.out.println(queryBuilder);
         jpaQuery.executeUpdate();
 
     }
