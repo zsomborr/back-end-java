@@ -17,12 +17,13 @@ public class FilterController {
     @Autowired
     private FilterService filterService;
 
-//    @PostMapping("/get-mentors-by-tags")
-//    public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
-//
-//        return filterService.getMentorsByTags(projectsAndTechs.getProjects(), projectsAndTechs.getTechnologies());
-//
-//    }
+    @PostMapping("/get-mentors-by-tags")
+    public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
+
+        System.out.println("ProjectsAndTechs: " + projectsAndTechs.toString());
+        return filterService.getMentorsByTags(projectsAndTechs.getProjects(), projectsAndTechs.getTechnologies());
+
+    }
 
 
     @GetMapping("/get-mentors")
