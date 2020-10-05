@@ -35,12 +35,12 @@ public class FilterService {
         return userRepository.findDistinctByUsername(username);
     }
 
-    public List getMentorsByTags(List<ProjectEntity> projects, List<TechnologyEntity> technologies) {
+    public List getMentorsByTechTags(List<TechnologyEntity> technologies) {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> whereClause = new ArrayList<>();
 
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t where t.technologyTag in (");
+        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t LEFT JOIN u.projectTags p where t.technologyTag in (");
 
         for(int i =0; i<technologies.size(); i++){
 
@@ -64,12 +64,42 @@ public class FilterService {
 
     }
 
-    public List<UserEntity> filterForSpecificTags(List<UserEntity> userEntities, List<TechnologyEntity> technologies){
+    public List getMentorsByProjectTags(List<ProjectEntity> projects) {
+        Map<String, Object> parameterMap = new HashMap<>();
+        List<String> whereClause = new ArrayList<>();
+
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t LEFT JOIN  u.projectTags p where p.projectTag in (");
+
+        for(int i =0; i<projects.size(); i++){
+
+            whereClause.add( ":word" + i );
+            parameterMap.put("word"+i, projects.get(i).getProjectTag() );
+        }
+
+        queryBuilder.append(String.join(" , ", whereClause));
+        queryBuilder.append(")");
+        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
+
+        for(String key :parameterMap.keySet()) {
+            jpaQuery.setParameter(key, parameterMap.get(key));
+        }
+
+        return jpaQuery.getResultList();
+
+    }
+
+    public List<UserEntity> filterForSpecificTags(List<UserEntity> userEntitiesByTechTags,List<UserEntity> userEntitiesByProjectTags, List<TechnologyEntity> technologies, List<ProjectEntity> projects){
+        Set<UserEntity> set = new LinkedHashSet<>(userEntitiesByTechTags);
+        set.addAll(userEntitiesByProjectTags);
+        List<UserEntity> combinedList = new ArrayList<>(set);
+
+
         List<UserEntity> results = new ArrayList<>();
         System.out.println("technologies: "+Arrays.toString(technologies.toArray()));
-       for(UserEntity userEntity : userEntities){
+       for(UserEntity userEntity : userEntitiesByTechTags){
            System.out.println("techtags of userEntities: "+Arrays.toString(userEntity.getTechnologyTags().toArray()));
-           if(userEntity.getTechnologyTags().containsAll(technologies)){
+           if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
                results.add(userEntity);
            }
        }
