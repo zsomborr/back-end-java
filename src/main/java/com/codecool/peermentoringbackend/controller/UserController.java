@@ -63,7 +63,6 @@ public class UserController {
         String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         userService.savePersonalData(publicUserModel.getFirstName(), publicUserModel.getLastName(), publicUserModel.getCountry(), publicUserModel.getCity(), publicUserModel.getModule(), userEntity.getId());
-
     }
 
     @GetMapping(value = "/get-user-private-page", produces = MediaType.APPLICATION_JSON_VALUE)
