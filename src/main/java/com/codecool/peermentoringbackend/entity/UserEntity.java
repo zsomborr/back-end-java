@@ -1,8 +1,6 @@
 package com.codecool.peermentoringbackend.entity;
 
 import com.codecool.peermentoringbackend.model.Module_;
-import com.codecool.peermentoringbackend.model.Proba;
-import com.codecool.peermentoringbackend.model.UserModel;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,14 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 
-@SqlResultSetMapping(
-        name = "Proba",
-        classes = @ConstructorResult(
-                targetClass = Proba.class,
-                columns = {
-                        @ColumnResult(name = "id", type = Long.class),
-                        @ColumnResult(name = "first_name"),
-                        @ColumnResult(name = "last_name")}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

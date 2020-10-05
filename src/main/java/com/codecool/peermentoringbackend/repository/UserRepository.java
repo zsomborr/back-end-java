@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 //    @Query("SELECT DISTINCT u FROM UserEntity u JOIN u.technologyTags t JOIN  u.projectTags p")
 //    List<UserEntity> getIfHasTechAndProjectTags();
 
-    @Query("SELECT DISTINCT u FROM UserEntity u JOIN FETCH u.technologyTags t where t.technologyTag = :techTag")
+    @Query("SELECT DISTINCT u FROM UserEntity u JOIN FETCH u.technologyTags t where t.technologyTag in :techTag")
     List<UserEntity> getIfHasSpecificTechTag( @Param("techTag") TechnologyEntity techTag);
 
     @Query("SELECT DISTINCT u FROM UserEntity u WHERE u.technologyTags is not empty OR u.projectTags is not empty")

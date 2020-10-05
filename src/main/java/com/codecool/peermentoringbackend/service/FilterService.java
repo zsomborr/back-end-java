@@ -34,71 +34,40 @@ public class FilterService {
         return userRepository.findDistinctByUsername(username);
     }
 
-//    public List getMentorsByTags(List<ProjectEntity> projects, List<TechnologyEntity> technologies) {
-//        Map<String, Object> parameterMap = new HashMap<>();
-//        List<String> whereClause = new ArrayList<>();
-//
-//        StringBuilder queryBuilder = new StringBuilder();
-//        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u JOIN FETCH u.technologyTags t where ");
-//
-//        for(int i =0; i<technologies.size(); i++){
-//
-//            whereClause.add("t.technologyTag = " + ":word" + i );
-//            parameterMap.put("word"+i, technologies.get(i).toString() );
-//        }
-//        System.out.println(Arrays.toString(parameterMap.keySet().toArray()));
-//
-//
-//
-//        queryBuilder.append(String.join(" and ", whereClause));
-//        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
-//
-//        for(String key :parameterMap.keySet()) {
-//            System.out.println("value: "+parameterMap.get(key));
-//            jpaQuery.setParameter(key, parameterMap.get(key));
-//        }
-//
-//        System.out.println(queryBuilder.toString());
-//
-//        return jpaQuery.getResultList();
-//
-//
-//
-//    }
-
-
     public List getMentorsByTags(List<ProjectEntity> projects, List<TechnologyEntity> technologies) {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> whereClause = new ArrayList<>();
 
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT u.id, u.first_name, u.last_name FROM user_entity u INNER JOIN user_entity_technology_tags t on u.id = t.user_entities_id INNER JOIN technology_entity tech on t.technology_tags_id=tech.id WHERE tech.technology_tag in (");
+        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u JOIN FETCH u.technologyTags t where t.technologyTag in (");
 
         for(int i =0; i<technologies.size(); i++){
 
-            whereClause.add(":word" + i );
-            parameterMap.put("word"+i, technologies.get(i).getTechnologyTag());
+            whereClause.add( ":word" + i );
+            parameterMap.put("word"+i, technologies.get(i).toString() );
         }
-//        System.out.println(Arrays.toString(parameterMap.keySet().toArray()));
-//
-//
-//
+        System.out.println(Arrays.toString(parameterMap.keySet().toArray()));
+
+        List<UserEntity> ifHasSpecificTechTag = userRepository.getIfHasSpecificTechTag(technologies.get(1));
+        System.out.println("ifhastechtag: "+ifHasSpecificTechTag.toString());
+
         queryBuilder.append(String.join(" , ", whereClause));
         queryBuilder.append(")");
-        Query jpaQuery = entityManager.createNativeQuery(queryBuilder.toString(), "Proba");
+        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
 
         for(String key :parameterMap.keySet()) {
+            System.out.println("value: "+parameterMap.get(key));
             jpaQuery.setParameter(key, parameterMap.get(key));
         }
 
         System.out.println(queryBuilder.toString());
 
-        List<Object[]> authors = jpaQuery.getResultList();
-        System.out.println(authors);
-
-        return authors;
+        return jpaQuery.getResultList();
 
 
 
     }
+
+
+
 }
