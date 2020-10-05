@@ -1,7 +1,7 @@
 package com.codecool.peermentoringbackend.model;
 
-import com.codecool.peermentoringbackend.entity.ProjectEntity;
-import com.codecool.peermentoringbackend.entity.TechnologyEntity;
+import com.codecool.peermentoringbackend.entity.AnswerEntity;
+import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PublicUserModel {
+public class UserDataQAndAModel {
 
     private String firstName;
 
@@ -27,7 +27,7 @@ public class PublicUserModel {
 
     private Module_ module;
 
-    private List<ProjectEntity> projectTags;
+    private List<QuestionEntity> userQuestions;
 
-    private List<TechnologyEntity> technologyTags;
+    private List<AnswerEntity> userAnswers;
 }

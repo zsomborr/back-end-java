@@ -2,7 +2,9 @@ package com.codecool.peermentoringbackend.controller;
 
 
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.LoggedUserModel;
 import com.codecool.peermentoringbackend.model.PublicUserModel;
+import com.codecool.peermentoringbackend.model.UserDataQAndAModel;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import com.codecool.peermentoringbackend.service.UserService;
@@ -44,10 +46,16 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(value = "/get-public-user-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public PublicUserModel getAllQuestion(@PathVariable Long userId) {
+    @GetMapping(value = "/get-user-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PublicUserModel getUserData(@PathVariable Long userId) {
 
         return userService.getPublicUserDataByUserId(userId);
+    }
+
+    @GetMapping(value = "/get-user-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    public LoggedUserModel getLoggedInUserData(HttpServletRequest request) {
+
+        return userService.getLoggedInUserData(request);
     }
 
     @PostMapping("/save-personal-data")
@@ -55,5 +63,11 @@ public class UserController {
         String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         userService.savePersonalData(publicUserModel.getFirstName(), publicUserModel.getLastName(), publicUserModel.getCountry(), publicUserModel.getCity(), publicUserModel.getModule(), userEntity.getId());
+    }
+
+    @GetMapping(value = "/get-user-private-page", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDataQAndAModel getLoggedInUserPage(HttpServletRequest request) {
+
+        return userService.getLoggedInUserPage(request);
     }
 }

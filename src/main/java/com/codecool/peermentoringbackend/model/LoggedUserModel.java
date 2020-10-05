@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PublicUserModel {
+public class LoggedUserModel {
 
     private String firstName;
 
@@ -30,4 +30,8 @@ public class PublicUserModel {
     private List<ProjectEntity> projectTags;
 
     private List<TechnologyEntity> technologyTags;
+
+    private List<ProjectEntity> allProjectTags;
+
+    private List<TechnologyEntity> allTechnologyTags;
 }
