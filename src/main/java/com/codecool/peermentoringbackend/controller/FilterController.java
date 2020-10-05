@@ -19,14 +19,10 @@ public class FilterController {
 
     @PostMapping("/get-mentors-by-tags")
     public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
-
-        System.out.println("ProjectsAndTechs: " + projectsAndTechs.toString());
-        List mentorsByTags = filterService.getMentorsByTechTags(projectsAndTechs.getTechnologies());
-        List mentorsByProjectTags = filterService.getMentorsByProjectTags(projectsAndTechs.getProjects());
-
-        return filterService.filterForSpecificTags(mentorsByTags, mentorsByProjectTags, projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
-
+        List<UserEntity> mentorsByTags = filterService.getMentorsByAllTags(projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
+        return filterService.filterForAllSpecificTags(mentorsByTags, projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
     }
+
 
 
     @GetMapping("/get-mentors")

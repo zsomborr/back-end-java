@@ -35,50 +35,34 @@ public class FilterService {
         return userRepository.findDistinctByUsername(username);
     }
 
-    public List getMentorsByTechTags(List<TechnologyEntity> technologies) {
+
+
+
+    public List<UserEntity> getMentorsByAllTags(List<TechnologyEntity> technologies, List<ProjectEntity> projects) {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> whereClause = new ArrayList<>();
+        List<String> whereClause2 = new ArrayList<>();
 
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t LEFT JOIN u.projectTags p where t.technologyTag in (");
 
         for(int i =0; i<technologies.size(); i++){
-
             whereClause.add( ":word" + i );
             parameterMap.put("word"+i, technologies.get(i).getTechnologyTag() );
         }
-        System.out.println(Arrays.toString(parameterMap.keySet().toArray()));
 
         queryBuilder.append(String.join(" , ", whereClause));
-        queryBuilder.append(")");
-        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
+        queryBuilder.append(") or p.projectTag in (");
 
-        for(String key :parameterMap.keySet()) {
-            System.out.println("value: "+parameterMap.get(key));
-            jpaQuery.setParameter(key, parameterMap.get(key));
+        for(int i =technologies.size(); i<projects.size() + technologies.size(); i++){
+
+            whereClause2.add( ":word" + i );
+            parameterMap.put("word"+i, projects.get(i-technologies.size()).getProjectTag() );
         }
 
-        System.out.println(queryBuilder.toString());
-
-        return jpaQuery.getResultList();
-
-    }
-
-    public List getMentorsByProjectTags(List<ProjectEntity> projects) {
-        Map<String, Object> parameterMap = new HashMap<>();
-        List<String> whereClause = new ArrayList<>();
-
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t LEFT JOIN  u.projectTags p where p.projectTag in (");
-
-        for(int i =0; i<projects.size(); i++){
-
-            whereClause.add( ":word" + i );
-            parameterMap.put("word"+i, projects.get(i).getProjectTag() );
-        }
-
-        queryBuilder.append(String.join(" , ", whereClause));
+        queryBuilder.append(String.join(" , ", whereClause2));
         queryBuilder.append(")");
+
         Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
 
         for(String key :parameterMap.keySet()) {
@@ -89,21 +73,14 @@ public class FilterService {
 
     }
 
-    public List<UserEntity> filterForSpecificTags(List<UserEntity> userEntitiesByTechTags,List<UserEntity> userEntitiesByProjectTags, List<TechnologyEntity> technologies, List<ProjectEntity> projects){
-        Set<UserEntity> set = new LinkedHashSet<>(userEntitiesByTechTags);
-        set.addAll(userEntitiesByProjectTags);
-        List<UserEntity> combinedList = new ArrayList<>(set);
-
-
+    public List<UserEntity> filterForAllSpecificTags(List<UserEntity> userEntities,List<TechnologyEntity> technologies, List<ProjectEntity> projects){
         List<UserEntity> results = new ArrayList<>();
-        System.out.println("technologies: "+Arrays.toString(technologies.toArray()));
-       for(UserEntity userEntity : userEntitiesByTechTags){
-           System.out.println("techtags of userEntities: "+Arrays.toString(userEntity.getTechnologyTags().toArray()));
-           if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
-               results.add(userEntity);
-           }
-       }
-       return results;
+        for(UserEntity userEntity : userEntities){
+            if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
+                results.add(userEntity);
+            }
+        }
+        return results;
     }
 
 
