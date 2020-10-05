@@ -21,7 +21,8 @@ public class FilterController {
     public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
 
         System.out.println("ProjectsAndTechs: " + projectsAndTechs.toString());
-        return filterService.getMentorsByTags(projectsAndTechs.getProjects(), projectsAndTechs.getTechnologies());
+        List mentorsByTags = filterService.getMentorsByTags(projectsAndTechs.getProjects(), projectsAndTechs.getTechnologies());
+        return filterService.filterForSpecificTags(mentorsByTags, projectsAndTechs.getTechnologies());
 
     }
 

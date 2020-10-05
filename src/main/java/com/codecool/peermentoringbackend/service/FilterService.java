@@ -5,6 +5,7 @@ import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.repository.UserRepository;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,17 +40,14 @@ public class FilterService {
         List<String> whereClause = new ArrayList<>();
 
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u JOIN FETCH u.technologyTags t where t.technologyTag in (");
+        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t where t.technologyTag in (");
 
         for(int i =0; i<technologies.size(); i++){
 
             whereClause.add( ":word" + i );
-            parameterMap.put("word"+i, technologies.get(i).toString() );
+            parameterMap.put("word"+i, technologies.get(i).getTechnologyTag() );
         }
         System.out.println(Arrays.toString(parameterMap.keySet().toArray()));
-
-        List<UserEntity> ifHasSpecificTechTag = userRepository.getIfHasSpecificTechTag(technologies.get(1));
-        System.out.println("ifhastechtag: "+ifHasSpecificTechTag.toString());
 
         queryBuilder.append(String.join(" , ", whereClause));
         queryBuilder.append(")");
@@ -64,8 +62,18 @@ public class FilterService {
 
         return jpaQuery.getResultList();
 
+    }
 
-
+    public List<UserEntity> filterForSpecificTags(List<UserEntity> userEntities, List<TechnologyEntity> technologies){
+        List<UserEntity> results = new ArrayList<>();
+        System.out.println("technologies: "+Arrays.toString(technologies.toArray()));
+       for(UserEntity userEntity : userEntities){
+           System.out.println("techtags of userEntities: "+Arrays.toString(userEntity.getTechnologyTags().toArray()));
+           if(userEntity.getTechnologyTags().containsAll(technologies)){
+               results.add(userEntity);
+           }
+       }
+       return results;
     }
 
 
