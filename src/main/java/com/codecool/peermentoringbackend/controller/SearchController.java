@@ -1,6 +1,8 @@
 package com.codecool.peermentoringbackend.controller;
 
+import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.model.DataModel;
+import com.codecool.peermentoringbackend.model.QandUserModel;
 import com.codecool.peermentoringbackend.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class SearchController {
     private SearchService searchService;
 
     @PostMapping("")
-    public List search(HttpServletRequest request, HttpServletResponse response, @RequestBody DataModel data) {
+    public List<QuestionEntity> search(HttpServletRequest request, HttpServletResponse response, @RequestBody DataModel data) {
         return searchService.search(Arrays.asList(data.getData().split(" ")));
     }
 }

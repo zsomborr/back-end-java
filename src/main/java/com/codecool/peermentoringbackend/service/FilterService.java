@@ -27,7 +27,7 @@ public class FilterService {
         if(!techOrProjectTags.isEmpty()){
             return techOrProjectTags;
         } else {
-            throw new NoSuchElementException();
+            return new ArrayList<>();
         }
     }
 
