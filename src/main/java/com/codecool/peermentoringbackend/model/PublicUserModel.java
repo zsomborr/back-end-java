@@ -25,6 +25,8 @@ public class PublicUserModel {
 
     private String city;
 
+    private String email;
+
     private Module_ module;
 
     private List<ProjectEntity> projectTags;

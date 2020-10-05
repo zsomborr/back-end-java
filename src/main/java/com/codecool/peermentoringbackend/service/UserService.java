@@ -50,7 +50,6 @@ public class UserService {
         List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
 
-        //PublicUserModel userModel = new PublicUserModel(userEntity.getUsername(), userEntity.getLastName(), userEntity.getFirstName(), userEntity.getCountry(), userEntity.getCity(), userEntity.getModule());
         return PublicUserModel.builder()
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
@@ -58,6 +57,7 @@ public class UserService {
                 .country(userEntity.getCountry())
                 .module(userEntity.getModule())
                 .username(userEntity.getUsername())
+                .email(userEntity.getEmail())
                 .projectTags(projectTags)
                 .technologyTags(technologyTags)
                 .build();
@@ -75,6 +75,7 @@ public class UserService {
                 .country(userEntity.getCountry())
                 .module(userEntity.getModule())
                 .username(userEntity.getUsername())
+                .email(userEntity.getEmail())
                 .projectTags(projectTags)
                 .technologyTags(technologyTags)
                 .allProjectTags(projectTagRepository.findAll())
