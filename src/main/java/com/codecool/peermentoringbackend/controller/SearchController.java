@@ -2,7 +2,6 @@ package com.codecool.peermentoringbackend.controller;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.model.DataModel;
-import com.codecool.peermentoringbackend.model.QandUserModel;
 import com.codecool.peermentoringbackend.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

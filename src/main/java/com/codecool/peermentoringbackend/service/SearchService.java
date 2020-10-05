@@ -1,7 +1,6 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
-import com.codecool.peermentoringbackend.model.QandUserModel;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
