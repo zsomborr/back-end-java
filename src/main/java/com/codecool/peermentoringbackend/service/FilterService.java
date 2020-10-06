@@ -87,7 +87,7 @@ public class FilterService {
             queryBuilder.append(String.join(" , ", whereClause));
             queryBuilder.append(")");
         } else{
-            return new ArrayList<>();
+            return getAllMentors();
         }
 
 
