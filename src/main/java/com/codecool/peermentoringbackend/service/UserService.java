@@ -93,7 +93,6 @@ public class UserService {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("UPDATE UserEntity u SET  ");
 
-        System.out.println("module: " + module);
         if (!firstName.isEmpty()){
             setClause.add(" u.firstName =:firstName,");
             parameterMap.put("firstName", firstName);
