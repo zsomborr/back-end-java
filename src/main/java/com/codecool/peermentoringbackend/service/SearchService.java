@@ -32,8 +32,8 @@ public class SearchService {
 
         for(String key :parameterMap.keySet()) {
             jpaQuery.setParameter(key, parameterMap.get(key));
-
         }
+
         List<QuestionEntity> resultList = jpaQuery.getResultList();
 
         for (QuestionEntity questionEntity: resultList){
