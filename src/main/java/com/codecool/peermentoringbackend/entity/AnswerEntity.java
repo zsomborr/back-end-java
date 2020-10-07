@@ -50,10 +50,14 @@ public class AnswerEntity {
     @Transient
     private Long questionId_;
 
+    @Transient
+    private String questionTitle;
+
     public void setTransientData() {
         this.userId_ = user.getId();
         this.username = user.getUsername();
         this.questionId_ = question.getId();
+        this.questionTitle = question.getTitle();
     }
 
 }

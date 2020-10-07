@@ -54,4 +54,9 @@ public class QuestionEntity {
         this.userId_ = user.getId();
         this.username = user.getUsername();
     }
+
+    public void setTransientData() {
+        this.userId_ = user.getId();
+        this.username = user.getUsername();
+    }
 }

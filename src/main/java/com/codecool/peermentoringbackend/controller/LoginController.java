@@ -83,4 +83,14 @@ public class LoginController {
         }
     }
 
+    @GetMapping(value = "/logout")
+    public ResponseEntity logout(){
+        ResponseCookie cookie = ResponseCookie
+                .from("authentication", "")
+                .maxAge(0)
+                .path("/").httpOnly(false).secure(false).build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body("");
+    }
+
+
 }

@@ -42,7 +42,7 @@ public class AnswerController {
             response.setStatus(200);
         } else {
             response.setStatus(400);
-            response.getWriter().println("user id can't be null");
+            response.getWriter().println("couldn't add answer");
         }
 
     }
