@@ -54,6 +54,11 @@ public class QuestionEntity {
     @Transient
     private String username;
 
+    @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<TechnologyEntity> technologyTags = new HashSet<>();
+
     public void setUserData() {
         this.userId_ = user.getId();
         this.username = user.getUsername();

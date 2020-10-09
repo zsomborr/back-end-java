@@ -28,6 +28,12 @@ public class TechnologyEntity {
     @ToString.Exclude
     Set<UserEntity> userEntities;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "technologyTags")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    Set<QuestionEntity> questionEntities;
+
     public void addUser(UserEntity userEntity) {
         this.userEntities.add(userEntity);
         userEntity.getTechnologyTags().add(this);
@@ -36,5 +42,15 @@ public class TechnologyEntity {
     public void removeUser(UserEntity userEntity) {
         this.userEntities.remove(userEntity);
         userEntity.getTechnologyTags().remove(this);
+    }
+
+    public void addQuestion(QuestionEntity questionEntity) {
+        this.questionEntities.add(questionEntity);
+        questionEntity.getTechnologyTags().add(this);
+    }
+
+    public void removeQuestion(QuestionEntity questionEntity) {
+        this.questionEntities.remove(questionEntity);
+        questionEntity.getTechnologyTags().remove(this);
     }
 }

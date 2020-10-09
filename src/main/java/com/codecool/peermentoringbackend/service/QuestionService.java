@@ -3,13 +3,15 @@ package com.codecool.peermentoringbackend.service;
 import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
-import com.codecool.peermentoringbackend.model.*;
+import com.codecool.peermentoringbackend.model.QAndAsModel;
+import com.codecool.peermentoringbackend.model.QModelWithId;
+import com.codecool.peermentoringbackend.model.QuestionModel;
+import com.codecool.peermentoringbackend.model.Vote;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
-import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -17,11 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.RecursiveTask;
+import java.util.*;
 
 @Service
 public class QuestionService {
@@ -34,6 +32,11 @@ public class QuestionService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TechnologyTagRepository technologyTagRepository;
+
+    @Autowired TagService tagService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -57,10 +60,20 @@ public class QuestionService {
                     .description(questionModel.getDescription())
                     .submissionTime(LocalDateTime.now())
                     .user(userRepository.findDistinctByUsername(username))
+                    .technologyTags(new HashSet<>())
                     .vote((long) 0)
                     .build();
-
             questionRepository.save(question);
+
+            List<String> technologyTags = questionModel.getTechnologyTags();
+
+            if (technologyTags != null) {
+                for (String tag : technologyTags ) {
+                    boolean b = tagService.addNewTechnologyTagToQuestion(tag, question);
+                    if (!b) return false;
+                    questionRepository.save(question);
+                }
+            }
         }
         catch (NullPointerException e) {
             return false;
