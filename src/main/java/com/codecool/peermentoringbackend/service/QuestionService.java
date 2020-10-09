@@ -42,13 +42,10 @@ public class QuestionService {
     private EntityManager entityManager;
 
     public List<QuestionEntity> getAll() {
-
         List<QuestionEntity> questionEntities = questionRepository.findAll();
-
         for (QuestionEntity question : questionEntities) {
             question.setUserData();
         }
-
         return questionEntities;
     }
 
@@ -62,6 +59,7 @@ public class QuestionService {
                     .user(userRepository.findDistinctByUsername(username))
                     .technologyTags(new HashSet<>())
                     .vote((long) 0)
+                    .anonym(questionModel.isAnonym())
                     .build();
             questionRepository.save(question);
 

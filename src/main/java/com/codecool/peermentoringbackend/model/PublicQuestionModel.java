@@ -27,4 +27,6 @@ public class PublicQuestionModel {
 
     private Long vote;
 
+    private boolean anonym;
+
 }

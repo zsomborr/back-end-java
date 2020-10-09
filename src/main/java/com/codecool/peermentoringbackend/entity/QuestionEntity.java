@@ -33,6 +33,9 @@ public class QuestionEntity {
     @Column
     private Long vote;
 
+    @Column
+    private boolean anonym;
+
     @NonNull
     @ManyToOne
     @ToString.Exclude

@@ -17,4 +17,6 @@ public class QModelWithId {
     private String description;
 
     private Long vote;
+
+    private boolean anonym;
 }

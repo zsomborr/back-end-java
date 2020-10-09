@@ -21,4 +21,6 @@ public class QuestionModel {
     private List<String> technologyTags;
 
     private Long vote;
+
+    private boolean anonym;
 }
