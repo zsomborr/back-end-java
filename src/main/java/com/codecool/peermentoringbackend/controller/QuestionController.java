@@ -1,12 +1,12 @@
 package com.codecool.peermentoringbackend.controller;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
-import com.codecool.peermentoringbackend.model.QAndAsModel;
-import com.codecool.peermentoringbackend.model.QuestionModel;
-import com.codecool.peermentoringbackend.model.RegResponse;
-import com.codecool.peermentoringbackend.model.UserModel;
+import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.*;
+import com.codecool.peermentoringbackend.repository.UserRepository;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import com.codecool.peermentoringbackend.service.QuestionService;
+import com.codecool.peermentoringbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +24,9 @@ public class QuestionController {
 
     @Autowired
     private JwtTokenServices jwtTokenServices;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("")
     public List<QuestionEntity> getAllQuestion() {
@@ -52,4 +55,18 @@ public class QuestionController {
         return questionService.getQuestionByIdAndAnswers(questionId);
     }
 
+
+    @PostMapping("/edit/{questionId}")
+    public void editQuestion(HttpServletRequest request, HttpServletResponse response, @RequestBody QModelWithId questionModel, @PathVariable String questionId) throws IOException {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        System.out.println(questionId);
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        boolean success = questionService.editQuestion(questionModel, userEntity, Long.parseLong(questionId));
+        if (success) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(400);
+            response.getWriter().println("users can only edit their own questions");
+        }
+    }
 }
