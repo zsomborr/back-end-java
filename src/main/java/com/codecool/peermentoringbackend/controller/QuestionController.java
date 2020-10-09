@@ -69,4 +69,10 @@ public class QuestionController {
             response.getWriter().println("users can only edit their own questions");
         }
     }
+
+
+    @PostMapping("/vote/{questionId}")
+    public void voteQuestion(@RequestBody Vote vote, @PathVariable Long questionId){
+        questionService.vote(vote, questionId);
+    }
 }

@@ -30,6 +30,9 @@ public class QuestionEntity {
     @Column
     private LocalDateTime submissionTime;
 
+    @Column
+    private Long vote;
+
     @NonNull
     @ManyToOne
     @ToString.Exclude
@@ -43,6 +46,7 @@ public class QuestionEntity {
     @EqualsAndHashCode.Exclude
     @JsonIgnore
     Set<AnswerEntity> answers = new HashSet<>();
+
 
     @Transient
     private Long userId_;

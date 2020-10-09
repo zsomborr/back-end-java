@@ -15,4 +15,6 @@ public class QModelWithId {
     private String title;
 
     private String description;
+
+    private Long vote;
 }

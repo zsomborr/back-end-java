@@ -25,4 +25,6 @@ public class PublicQuestionModel {
 
     private String username;
 
+    private Long vote;
+
 }

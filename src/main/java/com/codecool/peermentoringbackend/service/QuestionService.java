@@ -57,6 +57,7 @@ public class QuestionService {
                     .description(questionModel.getDescription())
                     .submissionTime(LocalDateTime.now())
                     .user(userRepository.findDistinctByUsername(username))
+                    .vote((long) 0)
                     .build();
 
             questionRepository.save(question);
@@ -120,5 +121,13 @@ return true;
             return false;
         }
         return true;
+    }
+
+    @Transactional
+    public void vote(Vote vote, Long questionId) {
+        Query jpaQuery = entityManager.createQuery("UPDATE QuestionEntity q SET q.vote = q.vote + :vote where q.id = :questionId");
+        jpaQuery.setParameter("questionId", questionId);
+        jpaQuery.setParameter("vote", vote.getVote());
+        jpaQuery.executeUpdate();
     }
 }
