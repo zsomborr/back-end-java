@@ -137,4 +137,8 @@ public class TagService {
         technologyTagRepository.save(technologyTag);
         return true;
     }
+
+    public List<TechnologyEntity> getAllTechnologyTag() {
+        return technologyTagRepository.findAll();
+    }
 }

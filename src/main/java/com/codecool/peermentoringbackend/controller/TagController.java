@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.HTML;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
@@ -86,6 +87,11 @@ public class TagController {
         String username = jwtTokenServices.getUsernameFromToken(request);
 
         tagService.removeTechnologyTagFromUser(tag, username);
+    }
+
+    @GetMapping("/get-all-tech")
+    public List<TechnologyEntity> getAllTechnologyTag() {
+        return tagService.getAllTechnologyTag();
     }
 
 }
