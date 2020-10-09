@@ -65,13 +65,13 @@ public class QuestionService {
 
             List<String> technologyTags = questionModel.getTechnologyTags();
 
-            for (String tag : technologyTags ) {
-
-                boolean b = tagService.addNewTechnologyTagToQuestion(tag, question);
-
-                questionRepository.save(question);
+            if (technologyTags != null) {
+                for (String tag : technologyTags ) {
+                    boolean b = tagService.addNewTechnologyTagToQuestion(tag, question);
+                    if (!b) return false;
+                    questionRepository.save(question);
+                }
             }
-
         }
         catch (NullPointerException e) {
             return false;
