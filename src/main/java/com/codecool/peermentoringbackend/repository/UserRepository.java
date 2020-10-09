@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> getIfHasProjectOrTechTags();
 
 
+    @Query("SELECT u from UserEntity u join fetch u.questions q where q.id = :questionId ")
+    UserEntity findUserEntityByQuestionId(@Param("questionId") Long questionId);
+
 }
