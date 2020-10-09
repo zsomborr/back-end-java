@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u from UserEntity u join fetch u.questions q where q.id = :questionId ")
     UserEntity findUserEntityByQuestionId(@Param("questionId") Long questionId);
 
+    @Query("SELECT u from UserEntity u join fetch u.answers a where a.id = :answerId ")
+    UserEntity findUserEntityByAnswerId(@Param("answerId") Long answerId);
 }
