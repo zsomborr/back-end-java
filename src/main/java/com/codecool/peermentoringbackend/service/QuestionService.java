@@ -3,10 +3,7 @@ package com.codecool.peermentoringbackend.service;
 import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
-import com.codecool.peermentoringbackend.model.QAndAsModel;
-import com.codecool.peermentoringbackend.model.QModelWithId;
-import com.codecool.peermentoringbackend.model.QuestionModel;
-import com.codecool.peermentoringbackend.model.Vote;
+import com.codecool.peermentoringbackend.model.*;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
@@ -140,5 +137,16 @@ return true;
         jpaQuery.setParameter("questionId", questionId);
         jpaQuery.setParameter("vote", vote.getVote());
         jpaQuery.executeUpdate();
+    }
+
+    public boolean addNewTag(QuestionTagModel tagModel) {
+
+        QuestionEntity question= questionRepository.findQuestionEntityById(tagModel.getQuestionId());
+
+        boolean b = tagService.addNewTechnologyTagToQuestion(tagModel.getTechnologyTag(), question);
+
+        if(b) questionRepository.save(question);
+
+        return b;
     }
 }
