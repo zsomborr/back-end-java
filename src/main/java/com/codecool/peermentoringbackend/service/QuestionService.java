@@ -149,4 +149,9 @@ return true;
 
         return b;
     }
+
+    public boolean removeTag(QuestionTagModel tagModel) {
+
+        return tagService.removeTechnologyTagFromQuestion(tagModel);
+    }
 }

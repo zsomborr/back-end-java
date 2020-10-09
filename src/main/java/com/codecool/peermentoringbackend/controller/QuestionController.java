@@ -87,4 +87,16 @@ public class QuestionController {
             response.getWriter().println("there was an error while adding the tag to the question");
         }
     }
+
+    @PostMapping("/remove-tech-tag")
+    public void removeTechTagFromQuestion(HttpServletResponse response, @RequestBody QuestionTagModel tagModel) throws IOException {
+
+        boolean success = questionService.removeTag(tagModel);
+        if (success) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(400);
+            response.getWriter().println("there was an error while removing the tag from the question");
+        }
+    }
 }
