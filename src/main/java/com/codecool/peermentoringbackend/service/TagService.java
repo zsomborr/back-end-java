@@ -1,6 +1,7 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.ProjectEntity;
+import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.TagsModel;
@@ -64,6 +65,29 @@ public class TagService {
                     .build();
             newTag.addUser(userRepository.findDistinctByUsername(username));
             technologyTagRepository.save(newTag);
+            return true;
+        }
+
+    }
+
+    public boolean addNewTechnologyTagToQuestion(String tag, QuestionEntity questionEntity) {
+        boolean b = technologyTagRepository.existsTechnologyEntityByTechnologyTag(tag);
+
+        if(b) {
+            TechnologyEntity tagToAdd = technologyTagRepository.findTechnologyEntityByTechnologyTag(tag);
+
+            technologyTagRepository.save(tagToAdd);
+            tagToAdd.addQuestion(questionEntity);
+            return true;
+        } else {
+            TechnologyEntity newTag = TechnologyEntity.builder()
+                    .technologyTag(tag)
+                    .userEntities(new HashSet<>())
+                    .questionEntities(new HashSet<>())
+                    .build();
+
+            technologyTagRepository.save(newTag);
+            newTag.addQuestion(questionEntity);
             return true;
         }
 
