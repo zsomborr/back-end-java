@@ -144,7 +144,6 @@ return true;
         QuestionEntity question= questionRepository.findQuestionEntityById(tagModel.getQuestionId());
 
         boolean b = tagService.addNewTechnologyTagToQuestion(tagModel.getTechnologyTag(), question);
-
         if(b) questionRepository.save(question);
 
         return b;

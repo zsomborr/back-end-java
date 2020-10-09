@@ -1,7 +1,10 @@
 package com.codecool.peermentoringbackend.controller;
 
+import com.codecool.peermentoringbackend.entity.QuestionEntity;
+import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.ProjectsAndTechs;
+import com.codecool.peermentoringbackend.model.TagsModel;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.service.FilterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,12 @@ public class FilterController {
     @PostMapping("/get-mentor-by-name")
     private UserEntity getMentorByName(@RequestBody UserModel userModel){
         return filterService.getMentorByName(userModel.getUsername());
+    }
+
+    @PostMapping("/get-questions-by-tags")
+    private List<QuestionEntity> getQuestionsByTags(@RequestBody TagsModel tags) {
+
+        return filterService.filterQuestionsByTags(tags.getTechnologyTags());
     }
 
 

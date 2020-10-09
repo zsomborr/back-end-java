@@ -1,9 +1,12 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.ProjectEntity;
+import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.UserModel;
+import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,12 @@ public class FilterService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private TechnologyTagRepository technologyTagRepository;
 
 
     public List<UserEntity> getAllMentors() {
@@ -111,5 +120,18 @@ public class FilterService {
     }
 
 
+    public List<QuestionEntity> filterQuestionsByTags(List<TechnologyEntity> tags) {
+        List<QuestionEntity> all = questionRepository.findAll();
+        List<QuestionEntity> filtered = new ArrayList<>();
+        List<TechnologyEntity> fullTags = new ArrayList<>();
 
+        for ( TechnologyEntity t:tags ) {
+            fullTags.add(technologyTagRepository.findTechnologyEntityByTechnologyTag(t.getTechnologyTag()));
+        }
+
+        for ( QuestionEntity q : all ) {
+            if(q.getTechnologyTags().containsAll(fullTags)) filtered.add(q);
+        }
+        return filtered;
+    }
 }
