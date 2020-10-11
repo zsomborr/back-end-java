@@ -3,6 +3,7 @@ package com.codecool.peermentoringbackend.entity;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -57,18 +58,27 @@ public class QuestionEntity {
     @Transient
     private String username;
 
+    @Transient
+    private boolean voted;
+
     @ManyToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<TechnologyEntity> technologyTags = new HashSet<>();
+
+    @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<UserEntity> voters = new HashSet<>();
+
 
     public void setUserData() {
         this.userId_ = user.getId();
         this.username = user.getUsername();
     }
 
-    public void setTransientData() {
-        this.userId_ = user.getId();
-        this.username = user.getUsername();
+    public void setVoterData() {
+        this.voted = true;
     }
+
 }
