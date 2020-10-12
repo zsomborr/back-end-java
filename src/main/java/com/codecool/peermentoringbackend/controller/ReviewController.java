@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/review")
@@ -37,6 +38,12 @@ public class ReviewController {
             response.getWriter().println("couldn't add review");
         }
 
+    }
+
+    @GetMapping("")
+    public List<ReviewEntity> getMyReviews(HttpServletRequest request) {
+        String username = jwtTokenServices.getUsernameFromToken(request);
+        return reviewService.getLoggedUsersReviews(username);
     }
 
 }

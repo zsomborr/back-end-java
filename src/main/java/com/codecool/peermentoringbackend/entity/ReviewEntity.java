@@ -1,5 +1,6 @@
 package com.codecool.peermentoringbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,5 +30,6 @@ public class ReviewEntity {
     private String reviewer;
 
     @ManyToOne
-    private UserEntity reviewed_user;
+    @JsonIgnore
+    private UserEntity reviewedUser;
 }

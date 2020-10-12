@@ -8,6 +8,8 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ReviewService {
 
@@ -28,11 +30,16 @@ public class ReviewService {
                 .rating(review.getRating())
                 .review(review.getReview())
                 .reviewer(username)
-                .reviewed_user(reviewedUser)
+                .reviewedUser(reviewedUser)
                 .build();
 
         reviewRepository.save(reviewEntity);
 
         return true;
+    }
+
+    public List<ReviewEntity> getLoggedUsersReviews(String username) {
+        UserEntity user = userRepository.findDistinctByUsername(username);
+        return reviewRepository.findAllByReviewedUser(user);
     }
 }

@@ -87,7 +87,7 @@ public class UserEntity {
     Set<QuestionEntity> votedQuestions = new HashSet<>();
 
     @Singular
-    @OneToMany(mappedBy = "reviewed_user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "reviewedUser", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<ReviewEntity> reviews = new HashSet<>();
