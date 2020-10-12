@@ -92,5 +92,9 @@ public class UserEntity {
     @EqualsAndHashCode.Exclude
     Set<ReviewEntity> reviews = new HashSet<>();
 
-
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private DiscordEntity discordEntity;
 }

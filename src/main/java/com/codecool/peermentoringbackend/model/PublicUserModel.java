@@ -32,4 +32,10 @@ public class PublicUserModel {
     private List<ProjectEntity> projectTags;
 
     private List<TechnologyEntity> technologyTags;
+
+    private Long discordId;
+
+    private String discordUsername;
+
+    private Long discriminator;
 }
