@@ -37,7 +37,7 @@ public class SearchService {
         List<QuestionEntity> resultList = jpaQuery.getResultList();
 
         for (QuestionEntity questionEntity: resultList){
-            questionEntity.setTransientData();
+            questionEntity.setUserData();
         }
 
 
