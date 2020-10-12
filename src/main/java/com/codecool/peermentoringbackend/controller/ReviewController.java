@@ -43,7 +43,17 @@ public class ReviewController {
     @GetMapping("")
     public List<ReviewEntity> getMyReviews(HttpServletRequest request) {
         String username = jwtTokenServices.getUsernameFromToken(request);
-        return reviewService.getLoggedUsersReviews(username);
+        return reviewService.getReviewsByUsername(username);
+    }
+
+    @GetMapping("/id/{userId}")
+    public List<ReviewEntity> getReviewsByUserId(@PathVariable Long userId) {
+        return reviewService.getReviewsByUserId(userId);
+    }
+
+    @GetMapping("/{username}")
+    public List<ReviewEntity> getReviewsByUsername(@PathVariable String username) {
+        return reviewService.getReviewsByUsername(username);
     }
 
 }

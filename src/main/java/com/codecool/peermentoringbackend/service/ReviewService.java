@@ -38,7 +38,12 @@ public class ReviewService {
         return true;
     }
 
-    public List<ReviewEntity> getLoggedUsersReviews(String username) {
+    public List<ReviewEntity> getReviewsByUserId(Long userId) {
+        UserEntity user = userRepository.findDistinctById(userId);
+        return reviewRepository.findAllByReviewedUser(user);
+    }
+
+    public List<ReviewEntity> getReviewsByUsername(String username) {
         UserEntity user = userRepository.findDistinctByUsername(username);
         return reviewRepository.findAllByReviewedUser(user);
     }
