@@ -86,6 +86,12 @@ public class UserEntity {
     @EqualsAndHashCode.Exclude
     Set<QuestionEntity> votedQuestions = new HashSet<>();
 
+    @Singular
+    @OneToMany(mappedBy = "reviewedUser", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Set<ReviewEntity> reviews = new HashSet<>();
+
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

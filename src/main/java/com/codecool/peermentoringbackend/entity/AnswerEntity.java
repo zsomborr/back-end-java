@@ -53,6 +53,9 @@ public class AnswerEntity {
     @Transient
     private String questionTitle;
 
+    @Transient
+    private boolean myAnswer;
+
     public void setTransientData() {
         this.userId_ = user.getId();
         this.username = user.getUsername();
