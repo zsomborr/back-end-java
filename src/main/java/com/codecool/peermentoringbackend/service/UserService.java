@@ -39,6 +39,9 @@ public class UserService {
     @Autowired
     AnswerRepository answerRepository;
 
+    @Autowired
+    DiscordRepository discordRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -49,18 +52,38 @@ public class UserService {
 
         List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
+        DiscordEntity discordEntity = discordRepository.getByUserId(userId);
+        if(discordEntity == null){
+            return PublicUserModel.builder()
+                    .firstName(userEntity.getFirstName())
+                    .lastName(userEntity.getLastName())
+                    .city(userEntity.getCity())
+                    .country(userEntity.getCountry())
+                    .module(userEntity.getModule())
+                    .username(userEntity.getUsername())
+                    .email(userEntity.getEmail())
+                    .projectTags(projectTags)
+                    .technologyTags(technologyTags)
+                    .build();
 
-        return PublicUserModel.builder()
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
-                .city(userEntity.getCity())
-                .country(userEntity.getCountry())
-                .module(userEntity.getModule())
-                .username(userEntity.getUsername())
-                .email(userEntity.getEmail())
-                .projectTags(projectTags)
-                .technologyTags(technologyTags)
-                .build();
+        } else{
+            return PublicUserModel.builder()
+                    .firstName(userEntity.getFirstName())
+                    .lastName(userEntity.getLastName())
+                    .city(userEntity.getCity())
+                    .country(userEntity.getCountry())
+                    .module(userEntity.getModule())
+                    .username(userEntity.getUsername())
+                    .email(userEntity.getEmail())
+                    .projectTags(projectTags)
+                    .technologyTags(technologyTags)
+                    .discordId(discordEntity.getDiscordId())
+                    .discordUsername(discordEntity.getDiscordUsername())
+                    .discriminator(discordEntity.getDiscriminator())
+                    .build();
+        }
+
+
     }
 
     public LoggedUserModel getLoggedInUserData(HttpServletRequest request) {
@@ -151,5 +174,26 @@ public class UserService {
                 .userQuestions(userQuestions)
                 .userAnswers(userAnswers)
                 .build();
+    }
+
+    public boolean saveDiscordData(DiscordModel discordModel, UserEntity userEntity) {
+        if(discordRepository.existsByDiscordId(discordModel.getId())){
+            return false;
+        } else {
+            DiscordEntity discordEntity = DiscordEntity.builder()
+                    .discordId(discordModel.getId())
+                    .discordUsername(discordModel.getUsername())
+                    .discriminator(discordModel.getDiscriminator())
+                    .user(userEntity)
+                    .build();
+            discordRepository.save(discordEntity);
+            return true;
+        }
+
+    }
+
+    public boolean hasDiscord(UserEntity userEntity) {
+        DiscordEntity discordEntity = discordRepository.findDistinctByUser(userEntity);
+        return discordEntity != null;
     }
 }
