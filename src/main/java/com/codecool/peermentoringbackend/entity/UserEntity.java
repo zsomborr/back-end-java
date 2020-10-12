@@ -85,4 +85,10 @@ public class UserEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Set<QuestionEntity> votedQuestions = new HashSet<>();
+
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private DiscordEntity discordEntity;
 }

@@ -2,6 +2,7 @@ package com.codecool.peermentoringbackend.controller;
 
 
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.DiscordModel;
 import com.codecool.peermentoringbackend.model.LoggedUserModel;
 import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.UserDataQAndAModel;
@@ -20,6 +21,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +39,6 @@ public class UserController {
 
     }
 
-
     @Autowired
     private UserService userService;
 
@@ -46,9 +48,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+
     @GetMapping(value = "/get-user-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public PublicUserModel getUserData(@PathVariable Long userId) {
-
         return userService.getPublicUserDataByUserId(userId);
     }
 
@@ -70,4 +72,32 @@ public class UserController {
 
         return userService.getLoggedInUserPage(request);
     }
+
+    @PostMapping("/discord")
+    public void saveDiscordData(@RequestBody DiscordModel discordModel, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        boolean exists = userService.saveDiscordData(discordModel, userEntity);
+        if (exists) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(400);
+            response.getWriter().println("user already saved discord data");
+        }
+    }
+
+    @GetMapping("/discord")
+    public void hasDiscord(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        boolean exists = userService.hasDiscord(userEntity);
+        if (exists) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(400);
+            response.getWriter().println("user doesn't have any discord data");
+        }
+    }
+
+
 }
