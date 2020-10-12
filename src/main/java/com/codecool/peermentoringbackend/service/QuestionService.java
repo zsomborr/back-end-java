@@ -45,6 +45,7 @@ public class QuestionService {
             if(question.getVoters().contains(userEntity)){
                 question.setVoted(true);
             }
+            if(question.getUsername().equals(userEntity.getUsername())) question.setMyQuestion(true);
         }
         return questionEntities;
     }
@@ -87,9 +88,13 @@ return true;
             questionEntityById.setVoted(true);
         }
         questionEntityById.setUserData();
+        if(questionEntityById.getUsername().equals(userEntity.getUsername())) questionEntityById.setMyQuestion(true);
+
 
         for (AnswerEntity answer: answerEntities) {
             answer.setTransientData();
+            if(answer.getUsername().equals(userEntity.getUsername())) answer.setMyAnswer(true);
+
         }
 
         return new QAndAsModel(questionEntityById, answerEntities);

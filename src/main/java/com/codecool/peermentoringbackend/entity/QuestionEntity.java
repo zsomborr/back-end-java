@@ -61,6 +61,9 @@ public class QuestionEntity {
     @Transient
     private boolean voted;
 
+    @Transient
+    private boolean myQuestion;
+
     @ManyToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
