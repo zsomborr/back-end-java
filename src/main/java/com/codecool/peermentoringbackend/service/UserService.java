@@ -91,19 +91,40 @@ public class UserService {
         UserEntity userEntity = userRepository.findDistinctByUsername(username);
         List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
-        return LoggedUserModel.builder()
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
-                .city(userEntity.getCity())
-                .country(userEntity.getCountry())
-                .module(userEntity.getModule())
-                .username(userEntity.getUsername())
-                .email(userEntity.getEmail())
-                .projectTags(projectTags)
-                .technologyTags(technologyTags)
-                .allProjectTags(projectTagRepository.findAll())
-                .allTechnologyTags(technologyTagRepository.findAll())
-                .build();
+        DiscordEntity discordEntity = discordRepository.getByUserId(userEntity.getId());
+        if(discordEntity== null){
+            return LoggedUserModel.builder()
+                    .firstName(userEntity.getFirstName())
+                    .lastName(userEntity.getLastName())
+                    .city(userEntity.getCity())
+                    .country(userEntity.getCountry())
+                    .module(userEntity.getModule())
+                    .username(userEntity.getUsername())
+                    .email(userEntity.getEmail())
+                    .projectTags(projectTags)
+                    .technologyTags(technologyTags)
+                    .allProjectTags(projectTagRepository.findAll())
+                    .allTechnologyTags(technologyTagRepository.findAll())
+                    .build();
+        } else {
+            return LoggedUserModel.builder()
+                    .firstName(userEntity.getFirstName())
+                    .lastName(userEntity.getLastName())
+                    .city(userEntity.getCity())
+                    .country(userEntity.getCountry())
+                    .module(userEntity.getModule())
+                    .username(userEntity.getUsername())
+                    .email(userEntity.getEmail())
+                    .projectTags(projectTags)
+                    .technologyTags(technologyTags)
+                    .allProjectTags(projectTagRepository.findAll())
+                    .allTechnologyTags(technologyTagRepository.findAll())
+                    .discordId(discordEntity.getDiscordId())
+                    .discordUsername(discordEntity.getDiscordUsername())
+                    .discriminator(discordEntity.getDiscriminator())
+                    .build();
+        }
+
     }
 
 
@@ -192,8 +213,5 @@ public class UserService {
 
     }
 
-    public boolean hasDiscord(UserEntity userEntity) {
-        DiscordEntity discordEntity = discordRepository.findDistinctByUser(userEntity);
-        return discordEntity != null;
-    }
+
 }

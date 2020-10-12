@@ -86,18 +86,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/discord")
-    public void hasDiscord(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
-        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
-        boolean exists = userService.hasDiscord(userEntity);
-        if (exists) {
-            response.setStatus(200);
-        } else {
-            response.setStatus(400);
-            response.getWriter().println("user doesn't have any discord data");
-        }
-    }
+
 
 
 }

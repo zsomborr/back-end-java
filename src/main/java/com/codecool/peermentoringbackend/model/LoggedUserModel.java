@@ -36,4 +36,10 @@ public class LoggedUserModel {
     private List<ProjectEntity> allProjectTags;
 
     private List<TechnologyEntity> allTechnologyTags;
+
+    private Long discordId;
+
+    private String discordUsername;
+
+    private Long discriminator;
 }
