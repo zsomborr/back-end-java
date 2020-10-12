@@ -38,10 +38,13 @@ public class QuestionService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<QuestionEntity> getAll() {
+    public List<QuestionEntity> getAll(UserEntity userEntity) {
         List<QuestionEntity> questionEntities = questionRepository.findAll();
         for (QuestionEntity question : questionEntities) {
             question.setUserData();
+            if(question.getVoters().contains(userEntity)){
+                question.setVoted(true);
+            }
         }
         return questionEntities;
     }
@@ -77,9 +80,12 @@ return true;
     }
 
 
-    public QAndAsModel getQuestionByIdAndAnswers(Long questionId) {
+    public QAndAsModel getQuestionByIdAndAnswers(Long questionId, UserEntity userEntity) {
         List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
         QuestionEntity questionEntityById = questionRepository.findQuestionEntityById(questionId);
+        if(questionEntityById.getVoters().contains(userEntity)){
+            questionEntityById.setVoted(true);
+        }
         questionEntityById.setUserData();
 
         for (AnswerEntity answer: answerEntities) {
@@ -132,11 +138,23 @@ return true;
     }
 
     @Transactional
-    public void vote(Vote vote, Long questionId) {
-        Query jpaQuery = entityManager.createQuery("UPDATE QuestionEntity q SET q.vote = q.vote + :vote where q.id = :questionId");
-        jpaQuery.setParameter("questionId", questionId);
-        jpaQuery.setParameter("vote", vote.getVote());
-        jpaQuery.executeUpdate();
+    public RegResponse vote(Vote vote, Long questionId, UserEntity userEntity) {
+        QuestionEntity questionEntity = questionRepository.findDistinctById(questionId);
+        if(questionEntity.getUser().getId() == userEntity.getId()){
+            return new RegResponse(false, "user can't vote for their own questions!");
+        }
+        if(!questionEntity.getVoters().contains(userEntity)){
+            questionEntity.addUser(userEntity);
+            Query jpaQuery = entityManager.createQuery("UPDATE QuestionEntity q SET q.vote = q.vote + :vote where q.id = :questionId");
+            jpaQuery.setParameter("questionId", questionId);
+            jpaQuery.setParameter("vote", vote.getVote());
+            jpaQuery.executeUpdate();
+
+            return new RegResponse(true, "success");
+        } else{
+            return new RegResponse(false, "user already voted for this question");
+        }
+
     }
 
     public boolean addNewTag(QuestionTagModel tagModel) {

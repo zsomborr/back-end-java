@@ -29,8 +29,10 @@ public class QuestionController {
     private UserRepository userRepository;
 
     @GetMapping("")
-    public List<QuestionEntity> getAllQuestion() {
-        return questionService.getAll();
+    public List<QuestionEntity> getAllQuestion(HttpServletRequest request) {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        return questionService.getAll(userEntity);
     }
 
 
@@ -51,8 +53,10 @@ public class QuestionController {
 
 
     @GetMapping("/{questionId}")
-    public QAndAsModel getQuestionByIdAndAnswers(@PathVariable Long questionId) {
-        return questionService.getQuestionByIdAndAnswers(questionId);
+    public QAndAsModel getQuestionByIdAndAnswers(HttpServletRequest request, @PathVariable Long questionId) {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        return questionService.getQuestionByIdAndAnswers(questionId, userEntity);
     }
 
 
@@ -72,8 +76,17 @@ public class QuestionController {
 
 
     @PostMapping("/vote/{questionId}")
-    public void voteQuestion(@RequestBody Vote vote, @PathVariable Long questionId){
-        questionService.vote(vote, questionId);
+    public void voteQuestion(HttpServletRequest request, HttpServletResponse response, @RequestBody Vote vote, @PathVariable Long questionId) throws IOException {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        RegResponse voteResponse = questionService.vote(vote, questionId, userEntity);
+        if (voteResponse.isSuccess()) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(400);
+        }
+        response.getWriter().println(voteResponse.getMessage());
+
     }
 
     @PostMapping("/add-tech-tag")

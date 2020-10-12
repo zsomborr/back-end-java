@@ -66,9 +66,10 @@ public class QuestionEntity {
     @EqualsAndHashCode.Exclude
     Set<TechnologyEntity> technologyTags = new HashSet<>();
 
-    @ManyToMany
+    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "votedQuestions")
     Set<UserEntity> voters = new HashSet<>();
 
 
@@ -81,4 +82,13 @@ public class QuestionEntity {
         this.voted = true;
     }
 
+    public void addUser(UserEntity userEntity) {
+        this.voters.add(userEntity);
+        userEntity.getVotedQuestions().add(this);
+    }
+
+    public void removeUser(UserEntity userEntity) {
+        this.voters.remove(userEntity);
+        userEntity.getVotedQuestions().remove(this);
+    }
 }
