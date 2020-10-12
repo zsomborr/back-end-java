@@ -18,9 +18,11 @@ public class ReviewService {
     private UserRepository userRepository;
 
 
-    public void addNewReview(ReviewModel review, String username) {
+    public boolean addNewReview(ReviewModel review, String username) {
 
         UserEntity reviewedUser = userRepository.findDistinctById(review.getReviewedUser());
+
+        if (reviewedUser == null) return false;
 
         ReviewEntity reviewEntity = ReviewEntity.builder()
                 .rating(review.getRating())
@@ -31,6 +33,6 @@ public class ReviewService {
 
         reviewRepository.save(reviewEntity);
 
-
+        return true;
     }
 }

@@ -28,14 +28,13 @@ public class ReviewController {
 
         String username = jwtTokenServices.getUsernameFromToken(request);
 
-        reviewService.addNewReview(review, username);
+        boolean success = reviewService.addNewReview(review, username);
 
-        boolean success = true;//questionService.addNewQuestion(questionModel, username);
         if (success) {
             response.setStatus(200);
         } else {
             response.setStatus(400);
-            response.getWriter().println("user id can't be null");
+            response.getWriter().println("couldn't add review");
         }
 
     }
