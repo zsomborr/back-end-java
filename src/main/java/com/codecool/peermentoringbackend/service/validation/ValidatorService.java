@@ -36,11 +36,11 @@ public class ValidatorService {
     }
 
     private boolean isAlpha(String string) {
-        return string.matches("[A-Za-zÀ-ÿ '-]*");
+        return string.matches("^(?U)[\\p{Alpha}\\-'. ]+");
     }
 
     private boolean isAlphaNumWithUnderscore(String string) {
-        return string.matches("^[A-Za-zÀ-ÿ0-9_]*$");
+        return string.matches("^(?U)[\\p{Alpha}\\-'. _]+");
     }
 
     private boolean isValidPasswordSecure(String password) {
