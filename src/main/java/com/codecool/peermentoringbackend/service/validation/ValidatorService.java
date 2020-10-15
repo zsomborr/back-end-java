@@ -36,21 +36,15 @@ public class ValidatorService {
     }
 
     private boolean isAlpha(String string) {
-        return string.matches("[a-zA-Z]+");
+        return string.matches("[A-Za-zÀ-ÿ '-]*");
     }
 
     private boolean isAlphaNumWithUnderscore(String string) {
-        return string.matches("^[a-zA-Z0-9_]*$");
+        return string.matches("^[A-Za-zÀ-ÿ0-9_]*$");
     }
 
     private boolean isValidPasswordSecure(String password) {
-       /* String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (password == null) {
-            return false;
-        }
-        Matcher m = pattern.matcher(password);
-       return m.matches(); */
+
 
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$");
     }
