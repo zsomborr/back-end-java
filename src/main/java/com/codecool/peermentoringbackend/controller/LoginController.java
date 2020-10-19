@@ -68,7 +68,7 @@ public class LoginController {
             ResponseCookie cookie = ResponseCookie
                     .from("authentication", token)
                     .maxAge(3600)  //18 hrs
-                    .path("/").httpOnly(false).secure(false).build();
+                    .path("/").httpOnly(true).secure(false).build();
 
 
 
