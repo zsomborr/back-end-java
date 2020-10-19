@@ -46,7 +46,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .antMatchers("/review").authenticated()
                 .antMatchers("/review/**").authenticated()
 
-                .antMatchers("/filter**").authenticated()
+                .antMatchers("/filter/**").authenticated()
                 .antMatchers("/question").authenticated()
                 .antMatchers("/question/**").authenticated()
                 .antMatchers("/answers").authenticated()
