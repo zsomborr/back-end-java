@@ -52,7 +52,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .antMatchers("/answers").authenticated()
                 .antMatchers("/answers/**").authenticated()
               .antMatchers("/auth/authentication").permitAll()
-                .antMatchers("/auth/logout").authenticated()
+                .antMatchers("/auth/logout").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/reg/registration").permitAll()
