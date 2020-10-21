@@ -39,7 +39,7 @@ public class QuestionService {
     private EntityManager entityManager;
 
     public List<QuestionEntity> getAll(UserEntity userEntity) {
-        List<QuestionEntity> questionEntities = questionRepository.findAll();
+        List<QuestionEntity> questionEntities = questionRepository.findAllDesc();
         for (QuestionEntity question : questionEntities) {
             question.setUserData();
             if(question.getVoters().contains(userEntity)){

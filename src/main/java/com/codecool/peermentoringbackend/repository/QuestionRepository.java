@@ -14,6 +14,9 @@ import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> {
 
+    @Query("SELECT q from QuestionEntity q ORDER BY q.submissionTime desc")
+    List<QuestionEntity> findAllDesc();
+
     QuestionEntity findQuestionEntityById(Long id);
 
     QuestionEntity findDistinctById(Long id);

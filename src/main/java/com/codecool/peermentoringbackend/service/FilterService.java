@@ -121,7 +121,7 @@ public class FilterService {
 
 
     public List<QuestionEntity> filterQuestionsByTags(List<TechnologyEntity> tags) {
-        List<QuestionEntity> all = questionRepository.findAll();
+        List<QuestionEntity> all = questionRepository.findAllDesc();
         List<QuestionEntity> filtered = new ArrayList<>();
         List<TechnologyEntity> fullTags = new ArrayList<>();
 
