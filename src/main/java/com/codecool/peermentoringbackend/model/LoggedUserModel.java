@@ -37,7 +37,7 @@ public class LoggedUserModel {
 
     private List<TechnologyEntity> allTechnologyTags;
 
-    private Long discordId;
+    private String discordId;
 
     private String discordUsername;
 

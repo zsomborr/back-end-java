@@ -11,7 +11,7 @@ import javax.persistence.Column;
 @AllArgsConstructor
 public class DiscordModel {
 
-    private Long id;
+    private String id;
 
     private String username;
 

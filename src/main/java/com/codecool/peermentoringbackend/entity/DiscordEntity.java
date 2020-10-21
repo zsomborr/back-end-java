@@ -17,7 +17,7 @@ public class DiscordEntity {
     private Long id;
 
     @Column
-    private Long discordId;
+    private String discordId;
 
     @Column
     private String discordUsername;

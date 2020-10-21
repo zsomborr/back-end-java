@@ -33,7 +33,7 @@ public class PublicUserModel {
 
     private List<TechnologyEntity> technologyTags;
 
-    private Long discordId;
+    private String discordId;
 
     private String discordUsername;
 

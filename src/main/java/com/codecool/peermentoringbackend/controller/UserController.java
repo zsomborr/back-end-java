@@ -78,6 +78,9 @@ public class UserController {
         String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         boolean exists = userService.saveDiscordData(discordModel, userEntity);
+//        System.out.println("discriminator: "+discordModel.getDiscriminator());
+//        System.out.println("id: " + discordModel.getId());
+//        System.out.println("name: " +discordModel.getUsername() );
         if (exists) {
             response.setStatus(200);
         } else {

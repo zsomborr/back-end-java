@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface DiscordRepository extends JpaRepository<DiscordEntity, Long> {
 
-    boolean existsByDiscordId(Long didcordId);
+    boolean existsByDiscordId(String didcordId);
 
     DiscordEntity findDistinctByUser(UserEntity userEntity);
 
