@@ -130,7 +130,10 @@ public class FilterService {
         }
 
         for ( QuestionEntity q : all ) {
-            if(q.getTechnologyTags().containsAll(fullTags)) filtered.add(q);
+            if(q.getTechnologyTags().containsAll(fullTags)){
+                q.setUserData();
+                filtered.add(q);
+            }
         }
         return filtered;
     }
