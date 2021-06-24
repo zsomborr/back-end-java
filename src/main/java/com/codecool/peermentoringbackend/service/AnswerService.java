@@ -17,25 +17,24 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AnswerService {
 
-    @Autowired
     private AnswerRepository answerRepository;
 
-    @Autowired
     private QuestionRepository questionRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository) {
+        this.answerRepository = answerRepository;
+        this.questionRepository = questionRepository;
+        this.userRepository = userRepository;
+    }
+
 
     public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId) {
         return answerRepository.findAnswerEntitiesByQuestionId(questionId);
@@ -60,25 +59,23 @@ public class AnswerService {
     }
 
 
-    @Transactional
-    public boolean editAnswer(AnswerModel answerModel, UserEntity userEntity, long answerId) {
+    public boolean editAnswer(AnswerModel answerModel, long answerId, String usernameFromToken) {
         try {
-            UserEntity userWhoAskedQ = userRepository.findUserEntityByAnswerId(answerId);
+            UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+            UserEntity userWhoAnswered = userRepository.findUserEntityByAnswerId(answerId);
 
-            if(userWhoAskedQ.getId().equals(userEntity.getId()) && !answerModel.getContent().isEmpty()){
-
-                StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.append("UPDATE AnswerEntity a SET ");
-                queryBuilder.append(" a.content =:content");
-                queryBuilder.append(" WHERE a.id = :answerId");
-                Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
-                jpaQuery.setParameter("answerId", answerId);
-                jpaQuery.setParameter("content", answerModel.getContent());
-                jpaQuery.executeUpdate();
+            if(userWhoAnswered.getId().equals(userEntity.getId()) && !answerModel.getContent().isEmpty()){
+                Optional<AnswerEntity> answerOptional = answerRepository.findById(answerId);
+                if(answerOptional.isPresent()){
+                    AnswerEntity answerEntity = answerOptional.get();
+                    answerEntity.setContent(answerModel.getContent());
+                    answerRepository.save(answerEntity);
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-
         } catch (NullPointerException e){
             return false;
         }
