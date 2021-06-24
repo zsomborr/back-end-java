@@ -28,8 +28,11 @@ public class FilterService {
     private QuestionRepository questionRepository;
 
     @Autowired
-    private TechnologyTagRepository technologyTagRepository;
-
+    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository) {
+        this.userRepository = userRepository;
+        this.questionRepository = questionRepository;
+        this.technologyTagRepository = technologyTagRepository;
+    }
 
     public List<UserEntity> getAllMentors() {
         List<UserEntity> techOrProjectTags = userRepository.getIfHasProjectOrTechTags();
@@ -47,54 +50,24 @@ public class FilterService {
 
 
     public List<UserEntity> getMentorsByAllTags(List<TechnologyEntity> technologies, List<ProjectEntity> projects) {
-        Map<String, Object> parameterMap = new HashMap<>();
-        List<String> whereClause = new ArrayList<>();
-        List<String> whereClause2 = new ArrayList<>();
-
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT u FROM UserEntity u LEFT JOIN  u.technologyTags t LEFT JOIN u.projectTags p where ");
-
+        Set<TechnologyEntity> technologyEntities = new HashSet<>(technologies);
+        Set<ProjectEntity> projectEntities = new HashSet<>(projects);
+        List<UserEntity> mentorsByAllTags = new ArrayList<>();
         if(!projects.isEmpty() && !technologies.isEmpty()){
-            queryBuilder.append("t.technologyTag in (");
-
-            for(int i =0; i<technologies.size(); i++){
-                whereClause.add( ":word" + i );
-                parameterMap.put("word"+i, technologies.get(i).getTechnologyTag() );
+            Optional<List<UserEntity>> distinctByTechnologyTagsAndProjectTags = userRepository.findDistinctByTechnologyTagsInOrProjectTagsIn(technologyEntities, projectEntities);
+            if (distinctByTechnologyTagsAndProjectTags.isPresent()){
+                mentorsByAllTags = distinctByTechnologyTagsAndProjectTags.get();
             }
-
-            queryBuilder.append(String.join(" , ", whereClause));
-            queryBuilder.append(") or p.projectTag in (");
-
-            for(int i =technologies.size(); i<projects.size() + technologies.size(); i++){
-
-                whereClause2.add( ":word" + i );
-                parameterMap.put("word"+i, projects.get(i-technologies.size()).getProjectTag() );
+        } else if(!projects.isEmpty()) {
+            Optional<List<UserEntity>> distinctByProjectTags = userRepository.findDistinctByProjectTagsIn(projectEntities);
+            if (distinctByProjectTags.isPresent()){
+                mentorsByAllTags = distinctByProjectTags.get();
             }
-
-            queryBuilder.append(String.join(" , ", whereClause2));
-            queryBuilder.append(")");
-        } else if(!projects.isEmpty()){
-            queryBuilder.append("p.projectTag in (");
-            for(int i =technologies.size(); i<projects.size() + technologies.size(); i++){
-
-                whereClause2.add( ":word" + i );
-                parameterMap.put("word"+i, projects.get(i-technologies.size()).getProjectTag() );
+        } else if(!technologies.isEmpty()){
+            Optional<List<UserEntity>> distinctByTechnologyTags = userRepository.findDistinctByTechnologyTagsIn(technologyEntities);
+            if (distinctByTechnologyTags.isPresent()) {
+                mentorsByAllTags = distinctByTechnologyTags.get();
             }
-
-            queryBuilder.append(String.join(" , ", whereClause2));
-            queryBuilder.append(")");
-
-        }
-        else if(!technologies.isEmpty()){
-            queryBuilder.append("t.technologyTag in (");
-
-            for(int i =0; i<technologies.size(); i++){
-                whereClause.add( ":word" + i );
-                parameterMap.put("word"+i, technologies.get(i).getTechnologyTag() );
-            }
-
-            queryBuilder.append(String.join(" , ", whereClause));
-            queryBuilder.append(")");
         } else{
             return getAllMentors();
         }
