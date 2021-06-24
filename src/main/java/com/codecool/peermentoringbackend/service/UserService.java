@@ -130,7 +130,15 @@ public class UserService {
 
 
     @Transactional
-    public void savePersonalData(String firstName, String lastName, String country, String city, Module_ module, Long userId){
+    public void savePersonalData(PublicUserModel publicUserModel, String usernameFromToken){
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        String firstName = publicUserModel.getFirstName();
+        String lastName = publicUserModel.getLastName();
+        String country = publicUserModel.getCountry();
+        String city = publicUserModel.getCity();
+        Module_ module = publicUserModel.getModule();
+        Long userId = userEntity.getId();
+
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> setClause = new ArrayList<>();
 
@@ -197,7 +205,8 @@ public class UserService {
                 .build();
     }
 
-    public boolean saveDiscordData(DiscordModel discordModel, UserEntity userEntity) {
+    public boolean saveDiscordData(DiscordModel discordModel, String usernameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         if(discordRepository.existsByDiscordId(discordModel.getId())){
             return false;
         } else {

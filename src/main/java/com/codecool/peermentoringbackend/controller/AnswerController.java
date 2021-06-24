@@ -28,10 +28,8 @@ public class AnswerController {
     private AnswerService answerService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private JwtTokenServices jwtTokenServices;
+
 
     @GetMapping("/{questionId}")
     public List<AnswerEntity> getAllAnswersByQuestionId(@PathVariable Long questionId) {
@@ -54,15 +52,13 @@ public class AnswerController {
     }
 
     @PostMapping("/edit/{answerId}")
-    public void editQuestion(HttpServletRequest request, HttpServletResponse response, @RequestBody AnswerModel answerModel, @PathVariable String answerId) throws IOException {
+    public void editAnswer(HttpServletRequest request, HttpServletResponse response, @RequestBody AnswerModel answerModel, @PathVariable String answerId) throws IOException {
         if(answerModel.getContent().isEmpty()){
             response.setStatus(400);
             response.getWriter().println("can't save empty answer");
         } else {
             String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
-            System.out.println(answerId);
-            UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
-            boolean success = answerService.editAnswer(answerModel, userEntity, Long.parseLong(answerId));
+            boolean success = answerService.editAnswer(answerModel, Long.parseLong(answerId), usernameFromToken);
             if (success) {
                 response.setStatus(200);
             } else {
