@@ -4,28 +4,22 @@ import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
-import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.*;
 import java.util.*;
 
 @Service
 public class FilterService {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
     private QuestionRepository questionRepository;
+
+    private TechnologyTagRepository technologyTagRepository;
 
     @Autowired
     public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository) {
@@ -69,17 +63,9 @@ public class FilterService {
                 mentorsByAllTags = distinctByTechnologyTags.get();
             }
         } else{
-            return getAllMentors();
+            mentorsByAllTags = userRepository.findAll();
         }
-
-
-        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
-
-        for(String key :parameterMap.keySet()) {
-            jpaQuery.setParameter(key, parameterMap.get(key));
-        }
-
-        return jpaQuery.getResultList();
+        return mentorsByAllTags;
     }
 
     public List<UserEntity> filterForAllSpecificTags(List<UserEntity> userEntities,List<TechnologyEntity> technologies, List<ProjectEntity> projects){
