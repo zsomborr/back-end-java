@@ -38,7 +38,8 @@ public class QuestionService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<QuestionEntity> getAll(UserEntity userEntity) {
+    public List<QuestionEntity> getAll(String usernameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         List<QuestionEntity> questionEntities = questionRepository.findAllDesc();
         for (QuestionEntity question : questionEntities) {
             question.setUserData();
@@ -81,7 +82,8 @@ return true;
     }
 
 
-    public QAndAsModel getQuestionByIdAndAnswers(Long questionId, UserEntity userEntity) {
+    public QAndAsModel getQuestionByIdAndAnswers(Long questionId, String usernameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
         QuestionEntity questionEntityById = questionRepository.findQuestionEntityById(questionId);
         if(questionEntityById.getVoters().contains(userEntity)){
@@ -102,8 +104,9 @@ return true;
 
 
     @Transactional
-    public boolean editQuestion(QModelWithId questionModel, UserEntity userEntity, Long questionId) {
+    public boolean editQuestion(QModelWithId questionModel, Long questionId, String usernameFromToken) {
         try {
+            UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
             UserEntity userWhoAskedQ = userRepository.findUserEntityByQuestionId(questionId);
 
             if(userWhoAskedQ.getId().equals(userEntity.getId())){
@@ -143,9 +146,10 @@ return true;
     }
 
     @Transactional
-    public RegResponse vote(Vote vote, Long questionId, UserEntity userEntity) {
+    public RegResponse vote(Vote vote, Long questionId, String usernameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         QuestionEntity questionEntity = questionRepository.findDistinctById(questionId);
-        if(questionEntity.getUser().getId() == userEntity.getId()){
+        if(questionEntity.getUser().getId().equals(userEntity.getId())){
             return new RegResponse(false, "user can't vote for their own questions!");
         }
         if(!questionEntity.getVoters().contains(userEntity)){
