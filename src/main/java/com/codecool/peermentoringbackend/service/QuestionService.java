@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -21,22 +22,24 @@ import java.util.*;
 @Service
 public class QuestionService {
 
-    @Autowired
     private QuestionRepository questionRepository;
 
-    @Autowired
     private AnswerRepository answerRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private TechnologyTagRepository technologyTagRepository;
 
-    @Autowired TagService tagService;
+    private TagService tagService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, TechnologyTagRepository technologyTagRepository, TagService tagService){
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
+        this.userRepository = userRepository;
+        this.technologyTagRepository = technologyTagRepository;
+        this.tagService = tagService;
+    }
 
     public List<QuestionEntity> getAll(String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
@@ -103,49 +106,33 @@ return true;
     }
 
 
-    @Transactional
     public boolean editQuestion(QModelWithId questionModel, Long questionId, String usernameFromToken) {
+        boolean edited = false;
         try {
             UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
             UserEntity userWhoAskedQ = userRepository.findUserEntityByQuestionId(questionId);
 
             if(userWhoAskedQ.getId().equals(userEntity.getId())){
-                Map<String, Object> parameterMap = new HashMap<>();
-                List<String> setClause = new ArrayList<>();
-
-                StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.append("UPDATE QuestionEntity q SET ");
-
-                if (!questionModel.getTitle().isEmpty()){
-                    setClause.add(" q.title =:title");
-                    parameterMap.put("title", questionModel.getTitle());
+                Optional<QuestionEntity> questionEntityOptional = questionRepository.findById(questionId);
+                if(questionEntityOptional.isPresent()){
+                    QuestionEntity questionEntity = questionEntityOptional.get();
+                    if(!questionModel.getTitle().isEmpty()){
+                        questionEntity.setTitle(questionModel.getTitle());
+                        edited = true;
+                    }
+                    if(!questionModel.getDescription().isEmpty()){
+                        questionEntity.setDescription(questionModel.getDescription());
+                        edited = true;
+                    }
                 }
-                if (!questionModel.getDescription().isEmpty()){
-                    setClause.add(" q.description =:description");
-                    parameterMap.put("description", questionModel.getDescription());
-                }
-
-                queryBuilder.append(String.join(",", setClause));
-                queryBuilder.append(" WHERE q.id = :questionId");
-                Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
-                jpaQuery.setParameter("questionId", questionId);
-                for(String key :parameterMap.keySet()) {
-                    jpaQuery.setParameter(key, parameterMap.get(key));
-                }
-
-                jpaQuery.executeUpdate();
-            } else {
-                return false;
             }
-
-
         } catch (NullPointerException e){
             return false;
         }
-        return true;
+        return edited;
     }
 
-    @Transactional
+//    @Transactional
     public RegResponse vote(Vote vote, Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         QuestionEntity questionEntity = questionRepository.findDistinctById(questionId);
@@ -154,10 +141,10 @@ return true;
         }
         if(!questionEntity.getVoters().contains(userEntity)){
             questionEntity.addUser(userEntity);
-            Query jpaQuery = entityManager.createQuery("UPDATE QuestionEntity q SET q.vote = q.vote + :vote where q.id = :questionId");
-            jpaQuery.setParameter("questionId", questionId);
-            jpaQuery.setParameter("vote", vote.getVote());
-            jpaQuery.executeUpdate();
+//            Query jpaQuery = entityManager.createQuery("UPDATE QuestionEntity q SET q.vote = q.vote + :vote where q.id = :questionId");
+//            jpaQuery.setParameter("questionId", questionId);
+//            jpaQuery.setParameter("vote", vote.getVote());
+//            jpaQuery.executeUpdate();
 
             return new RegResponse(true, "success");
         } else{
