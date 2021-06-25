@@ -1,48 +1,33 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
+import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SearchService {
-    @PersistenceContext
-    private EntityManager entityManager;
+
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    public SearchService(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
 
     public List<QuestionEntity> search(List<String> words){
-        Map<String, Object> parameterMap = new HashMap<>();
-        List<String> whereClause = new ArrayList<>();
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT distinct q FROM QuestionEntity q  WHERE ");
-
-        for(int i =0; i<words.size(); i++){
-            whereClause.add("lower(q.title) like " + "lower(:word" + i + ") or lower(q.description) like " + "lower(:word" + i+ ")");
-            parameterMap.put("word"+i, "%" +words.get(i) + "%");
+        Set<QuestionEntity> questionEntitiesSet = new LinkedHashSet<>();
+        for (String word : words) {
+            Optional<List<QuestionEntity>> distinctByTitleLikeOrDescriptionLike = questionRepository.findDistinctByTitleContainingOrDescriptionContaining(word, word);
+            if (distinctByTitleLikeOrDescriptionLike.isPresent()){
+                List<QuestionEntity> questionEntities = distinctByTitleLikeOrDescriptionLike.get();
+                questionEntitiesSet.addAll(questionEntities);
+            }
         }
-
-        queryBuilder.append(String.join(" and ", whereClause));
-        queryBuilder.append(" order by q.submissionTime desc");
-        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
-
-        for(String key :parameterMap.keySet()) {
-            jpaQuery.setParameter(key, parameterMap.get(key));
-        }
-
-        List<QuestionEntity> resultList = jpaQuery.getResultList();
-
-        for (QuestionEntity questionEntity: resultList){
-            questionEntity.setUserData();
-        }
-
-
-        return resultList;
-
+        return new ArrayList<>(questionEntitiesSet);
     }
 }
