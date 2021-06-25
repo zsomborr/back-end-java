@@ -75,7 +75,7 @@ public class QuestionServiceTest {
 
     @Test
     public void editQuestion_modifyTitle_returnsTrueAndQuestionIsModified(){
-        boolean isEdited = questionService.editQuestion(questionModelTitle, questionModelTitle.getId(), "testuser");
+        boolean isEdited = questionService.editQuestion(questionModelTitle, questionModelTitle.getId(), userEntity.getUsername());
         assertTrue(isEdited);
         Optional<QuestionEntity> questionOptional = questionRepository.findById(questionModelTitle.getId());
         QuestionEntity questionEntity = questionOptional.orElseThrow(NoSuchElementException::new);
@@ -84,7 +84,7 @@ public class QuestionServiceTest {
 
     @Test
     public void editQuestion_modifyDesc_returnsTrueAndQuestionIsModified(){
-        boolean isEdited = questionService.editQuestion(questionModelDesc, questionModelDesc.getId(), "testuser");
+        boolean isEdited = questionService.editQuestion(questionModelDesc, questionModelDesc.getId(), userEntity.getUsername());
         assertTrue(isEdited);
         Optional<QuestionEntity> questionOptional = questionRepository.findById(questionModelDesc.getId());
         QuestionEntity questionEntity = questionOptional.orElseThrow(NoSuchElementException::new);
@@ -93,27 +93,27 @@ public class QuestionServiceTest {
 
     @Test
     public void editQuestion_emptyQuestionModel_returnsFalse(){
-        boolean isEdited = questionService.editQuestion(questionModelEmpty, questionModelEmpty.getId(), "testuser");
+        boolean isEdited = questionService.editQuestion(questionModelEmpty, questionModelEmpty.getId(), userEntity.getUsername());
         assertFalse(isEdited);
     }
 
     @Test
     public void editQuestion_questionModelWithIdNotFound_returnsFalse(){
-        boolean isEdited = questionService.editQuestion(questionModelIdNotFound, questionModelIdNotFound.getId(), "");
+        boolean isEdited = questionService.editQuestion(questionModelIdNotFound, questionModelIdNotFound.getId(), userEntity.getUsername());
         assertFalse(isEdited);
     }
 
     @Test
     public void vote_successFullVoteUp_returnsTrue(){
         Vote vote = new Vote(1L);
-        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), "voteuser");
+        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), voteUserEntity.getUsername());
         assertTrue(regResponse.isSuccess());
     }
 
     @Test
     public void vote_successFullVoteUp_votesIncreasedByOne(){
         Vote vote = new Vote(1L);
-        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), "voteuser");
+        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), voteUserEntity.getUsername());
         assertTrue(regResponse.isSuccess());
         Optional<QuestionEntity> questionOptional = questionRepository.findById(questionEntity.getId());
         QuestionEntity questionEntity = questionOptional.orElseThrow(NoSuchElementException::new);
@@ -123,7 +123,7 @@ public class QuestionServiceTest {
     @Test
     public void vote_sameUser_returnsFalse(){
         Vote vote = new Vote(1L);
-        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), "testuser");
+        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), userEntity.getUsername());
         assertFalse(regResponse.isSuccess());
     }
 
