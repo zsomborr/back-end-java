@@ -23,6 +23,7 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> 
 
     List<QuestionEntity> findQuestionEntitiesByUser(UserEntity user);
 
+    Optional<List<QuestionEntity>> findDistinctByTitleContainingOrDescriptionContaining(String wordOne, String wordTwo);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Transactional
