@@ -132,7 +132,7 @@ return true;
         return edited;
     }
 
-//    @Transactional
+
     public RegResponse vote(Vote vote, Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         QuestionEntity questionEntity = questionRepository.findDistinctById(questionId);
@@ -141,11 +141,8 @@ return true;
         }
         if(!questionEntity.getVoters().contains(userEntity)){
             questionEntity.addUser(userEntity);
-//            Query jpaQuery = entityManager.createQuery("UPDATE QuestionEntity q SET q.vote = q.vote + :vote where q.id = :questionId");
-//            jpaQuery.setParameter("questionId", questionId);
-//            jpaQuery.setParameter("vote", vote.getVote());
-//            jpaQuery.executeUpdate();
-
+            questionEntity.setVote(questionEntity.getVote() + vote.getVote());
+            questionRepository.save(questionEntity);
             return new RegResponse(true, "success");
         } else{
             return new RegResponse(false, "user already voted for this question");
