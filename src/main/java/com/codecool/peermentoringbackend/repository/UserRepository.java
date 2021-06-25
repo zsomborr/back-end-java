@@ -1,5 +1,6 @@
 package com.codecool.peermentoringbackend.repository;
 
+import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findDistinctById(Long id);
 
     UserEntity findDistinctByUsername(String username);
+
+    Optional<List<UserEntity>> findDistinctByTechnologyTagsInOrProjectTagsIn(Set<TechnologyEntity> technologyTags, Set<ProjectEntity> projectTags);
+
+    Optional<List<UserEntity>> findDistinctByTechnologyTagsIn(Set<TechnologyEntity> technologyTags);
+
+    Optional<List<UserEntity>> findDistinctByProjectTagsIn(Set<ProjectEntity> projectTags);
 
     @Query("SELECT DISTINCT u FROM UserEntity u WHERE u.technologyTags is not empty OR u.projectTags is not empty")
     List<UserEntity> getIfHasProjectOrTechTags();
