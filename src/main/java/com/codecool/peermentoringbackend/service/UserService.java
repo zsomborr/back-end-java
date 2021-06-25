@@ -13,37 +13,45 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService {
 
-    @Autowired
+//    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+//    @Autowired
     private ProjectTagRepository projectTagRepository;
 
-    @Autowired
+//    @Autowired
     TechnologyTagRepository technologyTagRepository;
 
-    @Autowired
+//    @Autowired
     JwtTokenServices jwtTokenServices;
 
-    @Autowired
+//    @Autowired
     QuestionRepository questionRepository;
 
-    @Autowired
+//    @Autowired
     AnswerRepository answerRepository;
 
-    @Autowired
+//    @Autowired
     DiscordRepository discordRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+//    @PersistenceContext
+//    private EntityManager entityManager;
+
+    @Autowired
+    public UserService(UserRepository userRepository, ProjectTagRepository projectTagRepository, TechnologyTagRepository technologyTagRepository, JwtTokenServices jwtTokenServices, QuestionRepository questionRepository, AnswerRepository answerRepository, DiscordRepository discordRepository) {
+        this.userRepository = userRepository;
+        this.projectTagRepository = projectTagRepository;
+        this.technologyTagRepository = technologyTagRepository;
+        this.jwtTokenServices = jwtTokenServices;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
+        this.discordRepository = discordRepository;
+    }
 
     public PublicUserModel getPublicUserDataByUserId(Long userId) {
         UserEntity userEntity = userRepository.findDistinctById(userId);
@@ -128,56 +136,27 @@ public class UserService {
     }
 
 
-
-    @Transactional
     public void savePersonalData(PublicUserModel publicUserModel, String usernameFromToken){
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
-        String firstName = publicUserModel.getFirstName();
-        String lastName = publicUserModel.getLastName();
-        String country = publicUserModel.getCountry();
-        String city = publicUserModel.getCity();
-        Module_ module = publicUserModel.getModule();
-        Long userId = userEntity.getId();
-
-        Map<String, Object> parameterMap = new HashMap<>();
-        List<String> setClause = new ArrayList<>();
-
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("UPDATE UserEntity u SET  ");
-
-        if (!firstName.isEmpty()){
-            setClause.add(" u.firstName =:firstName,");
-            parameterMap.put("firstName", firstName);
+        if(userEntity == null){
+            throw new NoSuchElementException("User not found with username: " + usernameFromToken);
         }
-        if (!lastName.isEmpty()){
-            setClause.add(" u.lastName =:lastName,");
-            parameterMap.put("lastName", lastName);
+        if (publicUserModel.getFirstName() != null && !publicUserModel.getFirstName().isEmpty()){
+            userEntity.setFirstName(publicUserModel.getFirstName());
         }
-        if (!country.isEmpty()){
-            setClause.add(" u.country =:country,");
-            parameterMap.put("country", country);
+        if (publicUserModel.getLastName() != null && !publicUserModel.getLastName().isEmpty()){
+            userEntity.setLastName(publicUserModel.getLastName());
         }
-
-        if (!city.isEmpty()){
-            setClause.add(" u.city =:city,");
-            parameterMap.put("city", city);
+        if (publicUserModel.getCountry() != null && !publicUserModel.getCountry().isEmpty()){
+            userEntity.setCountry(publicUserModel.getCountry());
         }
-        if (module!=null){
-            setClause.add(" u.module =:module");
-            parameterMap.put("module", module);
+        if (publicUserModel.getCity() != null && !publicUserModel.getCity().isEmpty()){
+            userEntity.setCity(publicUserModel.getCity());
         }
-
-        queryBuilder.append(String.join("", setClause));
-        queryBuilder.append(" WHERE u.id = :userId");
-        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
-        jpaQuery.setParameter("userId", userId);
-
-        for(String key :parameterMap.keySet()) {
-            jpaQuery.setParameter(key, parameterMap.get(key));
+        if (publicUserModel.getModule() != null){
+            userEntity.setModule(publicUserModel.getModule());
         }
-
-        jpaQuery.executeUpdate();
-
+        userRepository.save(userEntity);
     }
 
     public UserDataQAndAModel getLoggedInUserPage(HttpServletRequest request) {
