@@ -17,10 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,17 +42,20 @@ class FilterServiceTest {
 
     private final List<TechnologyEntity> filledTechnologyEntities = new ArrayList<>();
     private final List<TechnologyEntity> emptyTechnologyEntities = new ArrayList<>();
+    private final List<TechnologyEntity> notOwnedTechnologyEntities = new ArrayList<>();
+
     private final List<ProjectEntity> filledProjectEntities = new ArrayList<>();
     private final List<ProjectEntity> emptyProjectEntities = new ArrayList<>();
+    private final List<ProjectEntity> notOwnedProjectEntities = new ArrayList<>();
 
     private TechnologyEntity technologyEntityOne;
     private TechnologyEntity technologyEntityTwo;
     private TechnologyEntity technologyEntityThree;
+    private TechnologyEntity technologyEntityFour;
 
     private ProjectEntity projectEntityOne;
     private ProjectEntity projectEntityTwo;
-
-    private QuestionEntity questionEntity;
+    private ProjectEntity projectEntityThree;
 
     private UserEntity userOne;
     private UserEntity userTwo;
@@ -69,14 +69,17 @@ class FilterServiceTest {
         technologyEntityOne = TechnologyEntity.builder().technologyTag("tech1").build();
         technologyEntityTwo = TechnologyEntity.builder().technologyTag("tech2").build();
         technologyEntityThree = TechnologyEntity.builder().technologyTag("tech3").build();
+        technologyEntityFour = TechnologyEntity.builder().technologyTag("no").build();
 
         projectEntityOne = ProjectEntity.builder().projectTag("proj1").build();
         projectEntityTwo = ProjectEntity.builder().projectTag("proj2").build();
+        projectEntityThree = ProjectEntity.builder().projectTag("no").build();
 
-        filledTechnologyEntities.add(technologyEntityOne);
-        filledTechnologyEntities.add(technologyEntityTwo);
-        filledProjectEntities.add(projectEntityOne);
-        filledProjectEntities.add(projectEntityTwo);
+        filledTechnologyEntities.addAll(Arrays.asList(technologyEntityOne, technologyEntityTwo));
+        filledProjectEntities.addAll(Arrays.asList(projectEntityOne, projectEntityTwo));
+
+        notOwnedTechnologyEntities.add(technologyEntityFour);
+        notOwnedProjectEntities.add(projectEntityThree);
 
 
         userOne = UserEntity.builder()
@@ -105,42 +108,40 @@ class FilterServiceTest {
                 .technologyTags(new HashSet<>(Collections.singleton(technologyEntityThree)))
                 .build();
 
-        technologyTagRepository.save(this.technologyEntityOne);
-        technologyTagRepository.save(this.technologyEntityTwo);
-        technologyTagRepository.save(this.technologyEntityThree);
+        technologyTagRepository.saveAll(Arrays.asList(technologyEntityOne, technologyEntityTwo, technologyEntityThree, technologyEntityFour));
 
-        projectTagRepository.save(this.projectEntityOne);
-        projectTagRepository.save(this.projectEntityTwo);
+        projectTagRepository.saveAll(Arrays.asList(projectEntityOne, projectEntityTwo, projectEntityThree));
 
-        userOne = userRepository.save(this.userOne);
-        userTwo = userRepository.save(this.userTwo);
-        userThree = userRepository.save(this.userThree);
-        userFour = userRepository.save(this.userFour);
+        userRepository.saveAll(Arrays.asList(userOne, userTwo, userThree, userFour));
     }
 
     @Test
-    public void getMentorsByAllTags_TechnologyTagsAndProjectTagsAreNotEmpty_returnThreeUser(){
+    public void getMentorsByAllTags_technologyTagsAndProjectTagsAreNotEmpty_returnThreeUser(){
         List<UserEntity> mentorsByAllTags = filterService.getMentorsByAllTags(filledTechnologyEntities, filledProjectEntities);
         assertThat(mentorsByAllTags).containsExactlyInAnyOrder(userOne, userThree, userTwo);
     }
 
     @Test
-    public void getMentorsByAllTags_TechnologyTagsIsNotEmptyAndProjectTagsIsEmpty_returnThreeUser(){
+    public void getMentorsByAllTags_technologyTagsIsNotEmptyAndProjectTagsIsEmpty_returnThreeUser(){
         List<UserEntity> mentorsByAllTags = filterService.getMentorsByAllTags(filledTechnologyEntities, emptyProjectEntities);
         assertThat(mentorsByAllTags).containsExactlyInAnyOrder(userOne, userTwo);
     }
 
     @Test
-    public void getMentorsByAllTags_ProjectTagsIsNotEmptyAndTechnologyTagsIsEmpty_returnThreeUser(){
+    public void getMentorsByAllTags_projectTagsIsNotEmptyAndTechnologyTagsIsEmpty_returnThreeUser(){
         List<UserEntity> mentorsByAllTags = filterService.getMentorsByAllTags(emptyTechnologyEntities, filledProjectEntities);
         assertThat(mentorsByAllTags).containsExactlyInAnyOrder(userOne, userThree);
     }
 
     @Test
-    public void getMentorsByAllTags_TechnologyTagsAndProjectTagsIsEmpty_returnThreeUser(){
+    public void getMentorsByAllTags_technologyTagsAndProjectTagsIsEmpty_returnThreeUser(){
         List<UserEntity> mentorsByAllTags = filterService.getMentorsByAllTags(emptyTechnologyEntities, emptyProjectEntities);
         assertThat(mentorsByAllTags).containsExactlyInAnyOrder(userOne, userTwo, userThree, userFour);
     }
 
-
+    @Test
+    public void getMentorsByAllTags_noUserFoundWithTechnologiesAndProjects_returnEmptyList(){
+        List<UserEntity> mentorsByAllTags = filterService.getMentorsByAllTags(notOwnedTechnologyEntities, notOwnedProjectEntities);
+        assertThat(mentorsByAllTags).isEmpty();
+    }
 }
