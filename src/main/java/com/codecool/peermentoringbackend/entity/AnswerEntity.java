@@ -41,6 +41,9 @@ public class AnswerEntity {
     private QuestionEntity question;
 
 
+    private boolean accepted;
+
+
     @Transient
     private Long userId_;
 
