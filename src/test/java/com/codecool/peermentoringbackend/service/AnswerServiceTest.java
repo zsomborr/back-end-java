@@ -22,6 +22,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -41,7 +43,8 @@ class AnswerServiceTest {
 
     private UserEntity userEntity;
 
-    private AnswerEntity answerEntity;
+    private AnswerEntity answerEntityOne;
+    private AnswerEntity answerEntityTwo;
 
     private AnswerModel answerModel;
 
@@ -52,8 +55,10 @@ class AnswerServiceTest {
         answerService = new AnswerService(answerRepository,questionRepository, userRepository);
         userEntity = UserEntity.builder().username("testuser").id(1L).email("testuser@email.com").password("password").build();
         questionEntity = QuestionEntity.builder().user(userEntity).build();
-        answerEntity = AnswerEntity.builder().content("sample").user(userEntity).question(questionEntity).build();
-        answerEntity = answerRepository.save(this.answerEntity);
+        answerEntityOne = AnswerEntity.builder().content("sample").user(userEntity).question(questionEntity).build();
+        answerEntityTwo = AnswerEntity.builder().content("sample").user(userEntity).question(questionEntity).accepted(true).build();
+        answerEntityOne = answerRepository.save(this.answerEntityOne);
+        answerEntityTwo = answerRepository.save(this.answerEntityTwo);
 
         answerModel = AnswerModel.builder().content("modified").build();
     }
@@ -62,7 +67,7 @@ class AnswerServiceTest {
     public void editAnswer_noSuchAnswer_returnFalse(){
         Mockito.when(userRepository.findDistinctByUsername(Mockito.anyString())).thenReturn(userEntity);
         Mockito.when(userRepository.findUserEntityByAnswerId(Mockito.anyLong())).thenReturn(userEntity);
-        boolean isEdited = answerService.editAnswer(answerModel, answerEntity.getId()+1, "");
+        boolean isEdited = answerService.editAnswer(answerModel, answerEntityOne.getId()+14234234, "");
         assertFalse(isEdited);
     }
 
@@ -70,18 +75,35 @@ class AnswerServiceTest {
     public void editAnswer_noSuchUser_returnFalse(){
         Mockito.when(userRepository.findDistinctByUsername(Mockito.anyString())).thenReturn(null);
         Mockito.when(userRepository.findUserEntityByAnswerId(Mockito.anyLong())).thenReturn(userEntity);
-        boolean isEdited = answerService.editAnswer(answerModel, answerEntity.getId(), "");
+        boolean isEdited = answerService.editAnswer(answerModel, answerEntityOne.getId(), "");
         assertFalse(isEdited);
     }
 
     @Test
-    void editAnswer_successfulEdit_returnTrue(){
+    public void editAnswer_successfulEdit_returnTrue(){
         Mockito.when(userRepository.findDistinctByUsername(Mockito.anyString())).thenReturn(userEntity);
         Mockito.when(userRepository.findUserEntityByAnswerId(Mockito.anyLong())).thenReturn(userEntity);
-        boolean isEdited = answerService.editAnswer(answerModel, answerEntity.getId(), "");
+        boolean isEdited = answerService.editAnswer(answerModel, answerEntityOne.getId(), "");
         assertTrue(isEdited);
-        Optional<AnswerEntity> answerOptional = answerRepository.findById(answerEntity.getId());
+        Optional<AnswerEntity> answerOptional = answerRepository.findById(answerEntityOne.getId());
         AnswerEntity answerEntity = answerOptional.orElseThrow(NoSuchElementException::new);
         assertEquals(answerEntity.getContent(), answerModel.getContent());
+    }
+
+    @Test
+    public void deleteAnswer_successfulDeletion_returnsTrue(){
+        boolean isDeleted = answerService.deleteAnswer(answerEntityOne.getId());
+        assertThat(isDeleted).isTrue();
+    }
+
+    @Test
+    public void deleteAnswer_answerIsAccepted_returnsFalse(){
+        boolean isDeleted = answerService.deleteAnswer(answerEntityTwo.getId());
+        assertThat(isDeleted).isFalse();
+    }
+
+    @Test
+    public void deleteAnswer_answerIsNotFound_throwsNoSuchElementException(){
+        assertThrows(NoSuchElementException.class, () -> answerService.deleteAnswer(answerEntityTwo.getId() + 11231231));
     }
 }
