@@ -32,7 +32,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .httpBasic().disable()
 
                 .csrf().disable()
-                .cors().disable()
+                .cors()
+                .and()
 
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -51,7 +52,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .antMatchers("/question/**").authenticated()
                 .antMatchers("/answers").authenticated()
                 .antMatchers("/answers/**").authenticated()
-              .antMatchers("/auth/authentication").permitAll()
+                .antMatchers(HttpMethod.PUT, "/answers/{id}/accept").authenticated()
+                .antMatchers("/auth/authentication").permitAll()
                 .antMatchers("/auth/logout").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/auth/login").permitAll()
@@ -60,6 +62,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 
                 .antMatchers(HttpMethod.OPTIONS, "/reg/registration").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/auth/login").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 //                .antMatchers("/user-service/user/getUser/**").authenticated()
 //                .antMatchers("/notes-service/**").authenticated()
 
