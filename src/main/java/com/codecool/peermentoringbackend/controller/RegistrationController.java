@@ -1,12 +1,9 @@
 package com.codecool.peermentoringbackend.controller;
 
-import com.codecool.peermentoringbackend.model.RegResponse;
+import com.codecool.peermentoringbackend.model.ApiResponse;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,13 +20,13 @@ public class RegistrationController {
     @PostMapping(value = "/registration")
     public void doRegistration(HttpServletResponse response, @RequestBody UserModel userModel) throws IOException {
 
-        RegResponse regResponse = registrationService.handleRegistration(userModel);
-        if (regResponse.isSuccess()) {
+        ApiResponse apiResponse = registrationService.handleRegistration(userModel);
+        if (apiResponse.isSuccess()) {
             response.setStatus(200);
         } else {
             response.setStatus(400);
         }
-        response.getWriter().println(regResponse.getMessage());
+        response.getWriter().println(apiResponse.getMessage());
     }
 
 }

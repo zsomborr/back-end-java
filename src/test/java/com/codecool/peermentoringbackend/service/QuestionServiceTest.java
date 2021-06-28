@@ -3,7 +3,7 @@ package com.codecool.peermentoringbackend.service;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.QModelWithId;
-import com.codecool.peermentoringbackend.model.RegResponse;
+import com.codecool.peermentoringbackend.model.ApiResponse;
 import com.codecool.peermentoringbackend.model.Vote;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
@@ -13,7 +13,6 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -106,15 +105,15 @@ public class QuestionServiceTest {
     @Test
     public void vote_successFullVoteUp_returnsTrue(){
         Vote vote = new Vote(1L);
-        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), voteUserEntity.getUsername());
-        assertTrue(regResponse.isSuccess());
+        ApiResponse apiResponse = questionService.vote(vote, questionEntity.getId(), voteUserEntity.getUsername());
+        assertTrue(apiResponse.isSuccess());
     }
 
     @Test
     public void vote_successFullVoteUp_votesIncreasedByOne(){
         Vote vote = new Vote(1L);
-        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), voteUserEntity.getUsername());
-        assertTrue(regResponse.isSuccess());
+        ApiResponse apiResponse = questionService.vote(vote, questionEntity.getId(), voteUserEntity.getUsername());
+        assertTrue(apiResponse.isSuccess());
         Optional<QuestionEntity> questionOptional = questionRepository.findById(questionEntity.getId());
         QuestionEntity questionEntity = questionOptional.orElseThrow(NoSuchElementException::new);
         assertEquals(1L, questionEntity.getVote());
@@ -123,8 +122,8 @@ public class QuestionServiceTest {
     @Test
     public void vote_sameUser_returnsFalse(){
         Vote vote = new Vote(1L);
-        RegResponse regResponse = questionService.vote(vote, questionEntity.getId(), userEntity.getUsername());
-        assertFalse(regResponse.isSuccess());
+        ApiResponse apiResponse = questionService.vote(vote, questionEntity.getId(), userEntity.getUsername());
+        assertFalse(apiResponse.isSuccess());
     }
 
 

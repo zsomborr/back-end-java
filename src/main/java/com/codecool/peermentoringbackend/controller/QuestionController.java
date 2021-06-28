@@ -1,12 +1,9 @@
 package com.codecool.peermentoringbackend.controller;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
-import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.*;
-import com.codecool.peermentoringbackend.repository.UserRepository;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import com.codecool.peermentoringbackend.service.QuestionService;
-import com.codecool.peermentoringbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +67,7 @@ public class QuestionController {
     @PostMapping("/vote/{questionId}")
     public void voteQuestion(HttpServletRequest request, HttpServletResponse response, @RequestBody Vote vote, @PathVariable Long questionId) throws IOException {
         String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
-        RegResponse voteResponse = questionService.vote(vote, questionId, usernameFromToken);
+        ApiResponse voteResponse = questionService.vote(vote, questionId, usernameFromToken);
         if (voteResponse.isSuccess()) {
             response.setStatus(200);
         } else {

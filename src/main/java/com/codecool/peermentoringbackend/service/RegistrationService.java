@@ -1,7 +1,7 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.UserEntity;
-import com.codecool.peermentoringbackend.model.RegResponse;
+import com.codecool.peermentoringbackend.model.ApiResponse;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import com.codecool.peermentoringbackend.service.validation.ValidatorService;
@@ -30,18 +30,18 @@ public class RegistrationService {
         passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    public RegResponse handleRegistration(UserModel userModel) {
+    public ApiResponse handleRegistration(UserModel userModel) {
 
         EmailValidator validator = EmailValidator.getInstance();
 
 
-        if (!validator.isValid(userModel.getEmail())) return new RegResponse(false, "e-mail format not valid");
+        if (!validator.isValid(userModel.getEmail())) return new ApiResponse(false, "e-mail format not valid");
         if (userRepository.existsByEmail(userModel.getEmail()))
-            return new RegResponse(false, "this email is already registered");
+            return new ApiResponse(false, "this email is already registered");
         if (userRepository.existsByUsername(userModel.getUsername()))
-            return new RegResponse(false, "this username is already taken");
+            return new ApiResponse(false, "this username is already taken");
         if (!validatorService.validateRegistration(userModel, 2, 20,  2, 20))
-            return new RegResponse(false, "registration failed due to invalid credentials");
+            return new ApiResponse(false, "registration failed due to invalid credentials");
 
         UserEntity userEntity = UserEntity.builder()
                 .email(userModel.getEmail())
@@ -53,7 +53,7 @@ public class RegistrationService {
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
         userRepository.save(userEntity);
-        return new RegResponse(true, "success");
+        return new ApiResponse(true, "success");
     }
 
 }

@@ -11,11 +11,6 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.swing.text.html.Option;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -133,19 +128,19 @@ return true;
     }
 
 
-    public RegResponse vote(Vote vote, Long questionId, String usernameFromToken) {
+    public ApiResponse vote(Vote vote, Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         QuestionEntity questionEntity = questionRepository.findDistinctById(questionId);
         if(questionEntity.getUser().getId().equals(userEntity.getId())){
-            return new RegResponse(false, "user can't vote for their own questions!");
+            return new ApiResponse(false, "user can't vote for their own questions!");
         }
         if(!questionEntity.getVoters().contains(userEntity)){
             questionEntity.addUser(userEntity);
             questionEntity.setVote(questionEntity.getVote() + vote.getVote());
             questionRepository.save(questionEntity);
-            return new RegResponse(true, "success");
+            return new ApiResponse(true, "success");
         } else{
-            return new RegResponse(false, "user already voted for this question");
+            return new ApiResponse(false, "user already voted for this question");
         }
 
     }
