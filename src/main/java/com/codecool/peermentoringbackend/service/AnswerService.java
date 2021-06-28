@@ -82,4 +82,21 @@ public class AnswerService {
         return true;
 
     }
+
+    public void acceptAnswer(Long answerId) {
+        Optional<AnswerEntity> answerEntityOptional = answerRepository.findById(answerId);
+        if(answerEntityOptional.isPresent()){
+            AnswerEntity answerEntity = answerEntityOptional.get();
+            answerEntity.setAccepted(!answerEntity.isAccepted());
+            Optional<AnswerEntity> acceptedOptional = answerRepository.findAnswerEntityByAcceptedTrue();
+            if(acceptedOptional.isPresent()){
+                AnswerEntity currentAcceptedAnswer = acceptedOptional.get();
+                currentAcceptedAnswer.setAccepted(false);
+                answerRepository.save(currentAcceptedAnswer);
+            }
+            answerRepository.save(answerEntity);
+        } else {
+            throw new NoSuchElementException("Answer with id not found: " + answerId);
+        }
+    }
 }
