@@ -40,6 +40,8 @@ public class AnswerEntity {
     @JsonIgnore
     private QuestionEntity question;
 
+    @Column
+    private  boolean accepted;
 
     private boolean accepted;
 

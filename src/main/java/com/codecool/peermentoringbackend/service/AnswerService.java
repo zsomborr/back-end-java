@@ -82,7 +82,7 @@ public class AnswerService {
         return true;
 
     }
-
+  
     public void acceptAnswer(Long answerId) {
         Optional<AnswerEntity> answerEntityOptional = answerRepository.findById(answerId);
         if(answerEntityOptional.isPresent()){
@@ -97,6 +97,21 @@ public class AnswerService {
             answerRepository.save(answerEntity);
         } else {
             throw new NoSuchElementException("Answer with id not found: " + answerId);
+        }
+    }
+
+    public boolean deleteAnswer(long answerId){
+        Optional<AnswerEntity> answerOptional = answerRepository.findById(answerId);
+        if(answerOptional.isPresent()){
+            AnswerEntity answerEntity = answerOptional.get();
+            if (!answerEntity.isAccepted()){
+                answerRepository.deleteById(answerId);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            throw new NoSuchElementException("Answer does not exist");
         }
     }
 }

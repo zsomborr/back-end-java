@@ -4,10 +4,7 @@ package com.codecool.peermentoringbackend.controller;
 import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
-import com.codecool.peermentoringbackend.model.AnswerModel;
-import com.codecool.peermentoringbackend.model.QAndAsModel;
-import com.codecool.peermentoringbackend.model.QModelWithId;
-import com.codecool.peermentoringbackend.model.QuestionModel;
+import com.codecool.peermentoringbackend.model.*;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
 import com.codecool.peermentoringbackend.service.AnswerService;
@@ -68,8 +65,24 @@ public class AnswerController {
         }
     }
 
+
     @PutMapping("/{answerId}/accept")
     public void acceptAnswer(@PathVariable(name = "answerId") Long answerId){
         answerService.acceptAnswer(answerId);
+    }
+  
+    @DeleteMapping("/delete/{answerId}")
+    public ApiResponse deleteAnswer(@PathVariable String answerId){
+        // answer model structure is questionable
+        var apiResponse = new ApiResponse();
+        boolean success = answerService.deleteAnswer(Long.parseLong(answerId));
+        if (success) {
+           apiResponse.setSuccess(true);
+           apiResponse.setMessage("Deleted answer successfully");
+        } else {
+            apiResponse.setSuccess(false);
+            apiResponse.setMessage("Can not delete accepted answer");
+        }
+        return apiResponse;
     }
 }
