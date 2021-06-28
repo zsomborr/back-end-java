@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/answers")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AnswerController {
 
     @Autowired
@@ -65,6 +65,12 @@ public class AnswerController {
         }
     }
 
+
+    @PutMapping("/{answerId}/accept")
+    public void acceptAnswer(@PathVariable(name = "answerId") Long answerId){
+        answerService.acceptAnswer(answerId);
+    }
+  
     @DeleteMapping("/delete/{answerId}")
     public ApiResponse deleteAnswer(@PathVariable String answerId){
         // answer model structure is questionable

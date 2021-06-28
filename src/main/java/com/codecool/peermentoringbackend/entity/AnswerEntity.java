@@ -43,6 +43,9 @@ public class AnswerEntity {
     @Column
     private  boolean accepted;
 
+    private boolean accepted;
+
+
     @Transient
     private Long userId_;
 
