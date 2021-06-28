@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/answers")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AnswerController {
 
     @Autowired
@@ -66,6 +66,10 @@ public class AnswerController {
                 response.getWriter().println("users can only edit their own answers");
             }
         }
+    }
 
+    @PutMapping("/{answerId}/accept")
+    public void acceptAnswer(@PathVariable(name = "answerId") Long answerId){
+        answerService.acceptAnswer(answerId);
     }
 }
