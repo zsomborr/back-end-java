@@ -120,6 +120,7 @@ return true;
                         questionEntity.setDescription(questionModel.getDescription());
                         edited = true;
                     }
+                    questionRepository.save(questionEntity);
                 }
             }
         } catch (NullPointerException e){
@@ -166,10 +167,12 @@ return true;
         Optional<QuestionEntity> questionEntityOptional = questionRepository.findById(questionId);
         if(questionEntityOptional.isPresent()){
             QuestionEntity questionEntity = questionEntityOptional.get();
+            questionEntity.setUserId_(questionEntity.getUser().getId());
+            questionEntity.setUsername(questionEntity.getUser().getUsername());
             if(questionEntity.getVoters().contains(userEntity)){
                 questionEntity.setVoted(true);
             }
-            if(questionEntity.getUsername().equals(userEntity.getUsername())) questionEntity.setMyQuestion(true);
+            if(questionEntity.getUser().getUsername().equals(userEntity.getUsername())) questionEntity.setMyQuestion(true);
             return questionEntity;
         } else {
             throw new NoSuchElementException("Question not found with Id " + questionId);
