@@ -81,7 +81,7 @@ public class AnswerController {
            apiResponse.setMessage("Deleted answer successfully");
         } else {
             apiResponse.setSuccess(false);
-            apiResponse.setMessage("Can not delete accepted answer");
+            apiResponse.setMessage("Could not delete answer");
         }
         return apiResponse;
     }
