@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/question")
+@CrossOrigin(allowCredentials = "true")
 public class QuestionController {
 
     @Autowired
