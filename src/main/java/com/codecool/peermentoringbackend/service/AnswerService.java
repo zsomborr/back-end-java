@@ -51,8 +51,7 @@ public class AnswerService {
                     .build();
 
             answerRepository.save(answerEntity);
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             return false;
         }
         return true;
@@ -64,9 +63,9 @@ public class AnswerService {
             UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
             UserEntity userWhoAnswered = userRepository.findUserEntityByAnswerId(answerId);
 
-            if(userWhoAnswered.getId().equals(userEntity.getId()) && !answerModel.getContent().isEmpty()){
+            if (userWhoAnswered.getId().equals(userEntity.getId()) && !answerModel.getContent().isEmpty()) {
                 Optional<AnswerEntity> answerOptional = answerRepository.findById(answerId);
-                if(answerOptional.isPresent()){
+                if (answerOptional.isPresent()) {
                     AnswerEntity answerEntity = answerOptional.get();
                     answerEntity.setContent(answerModel.getContent());
                     answerRepository.save(answerEntity);
@@ -76,20 +75,20 @@ public class AnswerService {
             } else {
                 return false;
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         }
         return true;
 
     }
-  
+
     public void acceptAnswer(Long answerId) {
         Optional<AnswerEntity> answerEntityOptional = answerRepository.findById(answerId);
-        if(answerEntityOptional.isPresent()){
+        if (answerEntityOptional.isPresent()) {
             AnswerEntity answerEntity = answerEntityOptional.get();
             answerEntity.setAccepted(!answerEntity.isAccepted());
             Optional<AnswerEntity> acceptedOptional = answerRepository.findAnswerEntityByAcceptedTrue();
-            if(acceptedOptional.isPresent()){
+            if (acceptedOptional.isPresent()) {
                 AnswerEntity currentAcceptedAnswer = acceptedOptional.get();
                 currentAcceptedAnswer.setAccepted(false);
                 answerRepository.save(currentAcceptedAnswer);
@@ -100,18 +99,13 @@ public class AnswerService {
         }
     }
 
-    public boolean deleteAnswer(long answerId){
+    public boolean deleteAnswer(long answerId) {
         Optional<AnswerEntity> answerOptional = answerRepository.findById(answerId);
-        if(answerOptional.isPresent()){
-            AnswerEntity answerEntity = answerOptional.get();
-            if (!answerEntity.isAccepted()){
-                answerRepository.deleteById(answerId);
-                return true;
-            } else {
-                return false;
-            }
+        if (answerOptional.isPresent()) {
+            answerRepository.deleteById(answerId);
+            return true;
         } else {
-            throw new NoSuchElementException("Answer does not exist");
+            return false;
         }
     }
 }
