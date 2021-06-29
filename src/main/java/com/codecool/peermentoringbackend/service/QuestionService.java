@@ -11,6 +11,7 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -119,6 +120,7 @@ return true;
                         questionEntity.setDescription(questionModel.getDescription());
                         edited = true;
                     }
+                    questionRepository.save(questionEntity);
                 }
             }
         } catch (NullPointerException e){
@@ -158,5 +160,22 @@ return true;
     public boolean removeTag(QuestionTagModel tagModel) {
 
         return tagService.removeTechnologyTagFromQuestion(tagModel);
+    }
+
+    public QuestionEntity getQuestionById(Long questionId, String usernameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        Optional<QuestionEntity> questionEntityOptional = questionRepository.findById(questionId);
+        if(questionEntityOptional.isPresent()){
+            QuestionEntity questionEntity = questionEntityOptional.get();
+            questionEntity.setUserId_(questionEntity.getUser().getId());
+            questionEntity.setUsername(questionEntity.getUser().getUsername());
+            if(questionEntity.getVoters().contains(userEntity)){
+                questionEntity.setVoted(true);
+            }
+            if(questionEntity.getUser().getUsername().equals(userEntity.getUsername())) questionEntity.setMyQuestion(true);
+            return questionEntity;
+        } else {
+            throw new NoSuchElementException("Question not found with Id " + questionId);
+        }
     }
 }

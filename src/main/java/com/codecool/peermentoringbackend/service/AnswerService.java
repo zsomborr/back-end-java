@@ -36,8 +36,14 @@ public class AnswerService {
     }
 
 
-    public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId) {
-        return answerRepository.findAnswerEntitiesByQuestionId(questionId);
+    public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(userNameFromToken);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
+        for (AnswerEntity answer: answerEntities) {
+            answer.setTransientData();
+            if(answer.getUsername().equals(userEntity.getUsername())) answer.setMyAnswer(true);
+        }
+        return answerEntities;
     }
 
     public boolean addNewAnswer(AnswerModel answerModel, String username) {

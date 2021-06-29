@@ -115,6 +115,17 @@ public class PeerMentoringBackEndApplication {
                     .build();
             userRepository.save(testUser);
 
+            UserEntity testUser2 = UserEntity.builder()
+                    .firstName("test2")
+                    .lastName("test2")
+                    .email("test2@codecool.com")
+                    .city("Budapest")
+                    .country("Hungary")
+                    .username("test2")
+                    .password("{bcrypt}$2a$10$/A5s3AjcKnRem6lS3uwn5.hV.xZzqy6SK8mn4uRyBQXMj5RcHIUG6")
+                    .build();
+            userRepository.save(testUser2);
+
             ProjectEntity askMate = ProjectEntity.builder().projectTag("Ask Mate").build();
             ProjectEntity sixHandshakes = ProjectEntity.builder().projectTag("Six Handshakes").build();
             ProjectEntity hangman = ProjectEntity.builder().projectTag("Hangman").build();

@@ -29,8 +29,9 @@ public class AnswerController {
 
 
     @GetMapping("/{questionId}")
-    public List<AnswerEntity> getAllAnswersByQuestionId(@PathVariable Long questionId) {
-        return answerService.getAllAnswersByQuestionId(questionId);
+    public List<AnswerEntity> getAllAnswersByQuestionId(HttpServletRequest request, @PathVariable Long questionId) {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        return answerService.getAllAnswersByQuestionId(questionId, usernameFromToken);
     }
 
     @PostMapping("/add")
