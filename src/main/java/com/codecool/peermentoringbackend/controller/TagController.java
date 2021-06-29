@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
+@CrossOrigin(allowCredentials = "true")
 public class TagController {
 
     @Autowired
