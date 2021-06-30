@@ -101,4 +101,19 @@ public class QuestionController {
             response.getWriter().println("there was an error while removing the tag from the question");
         }
     }
+
+    @DeleteMapping("/delete/{questionId}")
+    public ApiResponse deleteQuestion(@PathVariable String questionId){
+        // answer model structure is questionable
+        var apiResponse = new ApiResponse();
+        boolean success = questionService.deleteQuestionAndRelatedAnswers(Long.parseLong(questionId));
+        if (success) {
+            apiResponse.setSuccess(true);
+            apiResponse.setMessage("Deleted question and related answers successfully");
+        } else {
+            apiResponse.setSuccess(false);
+            apiResponse.setMessage("Could not delete question");
+        }
+        return apiResponse;
+    }
 }
