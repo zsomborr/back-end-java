@@ -82,7 +82,7 @@ return true;
 
     public QAndAsModel getQuestionByIdAndAnswers(Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
-        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVote(questionId);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVoteDesc(questionId);
         QuestionEntity questionEntityById = questionRepository.findQuestionEntityById(questionId);
         if(questionEntityById.getVoters().contains(userEntity)){
             questionEntityById.setVoted(true);

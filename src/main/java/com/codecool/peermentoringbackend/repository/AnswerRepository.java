@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<AnswerEntity, Long> {
-     List<AnswerEntity> findAnswerEntitiesByQuestionIdOrderByVote(Long questionId);
+     List<AnswerEntity> findAnswerEntitiesByQuestionIdOrderByVoteDesc(Long questionId);
 
      List<AnswerEntity> findAnswerEntitiesByUser(UserEntity user);
 

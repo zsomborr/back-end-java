@@ -33,7 +33,7 @@ public class AnswerService {
 
     public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(userNameFromToken);
-        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVote(questionId);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVoteDesc(questionId);
         for (AnswerEntity answer: answerEntities) {
             answer.setTransientData();
             if(answer.getVoters().contains(userEntity)){
