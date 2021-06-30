@@ -11,7 +11,6 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -83,7 +82,7 @@ return true;
 
     public QAndAsModel getQuestionByIdAndAnswers(Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
-        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVoteDesc(questionId);
         QuestionEntity questionEntityById = questionRepository.findQuestionEntityById(questionId);
         if(questionEntityById.getVoters().contains(userEntity)){
             questionEntityById.setVoted(true);
