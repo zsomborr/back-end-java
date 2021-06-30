@@ -26,6 +26,9 @@ public class AnswerEntity {
     @Column
     private LocalDateTime submissionTime;
 
+    @Column
+    private Long vote;
+
     @NonNull
     @ManyToOne
     @ToString.Exclude
@@ -39,6 +42,12 @@ public class AnswerEntity {
     @EqualsAndHashCode.Exclude
     @JsonIgnore
     private QuestionEntity question;
+
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "votedAnswers")
+    Set<UserEntity> voters = new HashSet<>();
 
     @Column
     private  boolean accepted;
@@ -56,6 +65,9 @@ public class AnswerEntity {
     private String questionTitle;
 
     @Transient
+    private boolean voted;
+
+    @Transient
     private boolean myAnswer;
 
     public void setTransientData() {
@@ -63,6 +75,16 @@ public class AnswerEntity {
         this.username = user.getUsername();
         this.questionId_ = question.getId();
         this.questionTitle = question.getTitle();
+    }
+
+    public void addUser(UserEntity userEntity) {
+        this.voters.add(userEntity);
+        userEntity.getVotedAnswers().add(this);
+    }
+
+    public void removeUser(UserEntity userEntity) {
+        this.voters.remove(userEntity);
+        userEntity.getVotedAnswers().remove(this);
     }
 
 }
