@@ -65,10 +65,10 @@ public class QuestionController {
     }
 
 
-    @PostMapping("/vote/{questionId}")
-    public void voteQuestion(HttpServletRequest request, HttpServletResponse response, @RequestBody Vote vote, @PathVariable Long questionId) throws IOException {
+    @PutMapping("/vote/{questionId}")
+    public void voteQuestion(HttpServletRequest request, HttpServletResponse response, @PathVariable Long questionId) throws IOException {
         String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
-        ApiResponse voteResponse = questionService.vote(vote, questionId, usernameFromToken);
+        ApiResponse voteResponse = questionService.vote(questionId, usernameFromToken);
         if (voteResponse.isSuccess()) {
             response.setStatus(200);
         } else {

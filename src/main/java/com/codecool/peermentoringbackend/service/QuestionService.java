@@ -130,7 +130,7 @@ return true;
     }
 
 
-    public ApiResponse vote(Vote vote, Long questionId, String usernameFromToken) {
+    public ApiResponse vote(Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         QuestionEntity questionEntity = questionRepository.findDistinctById(questionId);
         if(questionEntity.getUser().getId().equals(userEntity.getId())){
@@ -138,11 +138,14 @@ return true;
         }
         if(!questionEntity.getVoters().contains(userEntity)){
             questionEntity.addUser(userEntity);
-            questionEntity.setVote(questionEntity.getVote() + vote.getVote());
+            questionEntity.setVote(questionEntity.getVote() + 1);
             questionRepository.save(questionEntity);
-            return new ApiResponse(true, "success");
+            return new ApiResponse(true, "Successfully voted on question: " + questionEntity.getId());
         } else{
-            return new ApiResponse(false, "user already voted for this question");
+            questionEntity.removeUser(userEntity);
+            questionEntity.setVote(questionEntity.getVote() - 1);
+            questionRepository.save(questionEntity);
+            return new ApiResponse(true, "Removed vote from question: " + questionEntity.getId());
         }
 
     }
