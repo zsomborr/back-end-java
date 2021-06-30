@@ -14,4 +14,6 @@ public interface AnswerRepository extends JpaRepository<AnswerEntity, Long> {
      List<AnswerEntity> findAnswerEntitiesByUser(UserEntity user);
 
      Optional<AnswerEntity> findAnswerEntityByAcceptedTrue();
+
+     Optional<List<AnswerEntity>> findAllByQuestionId(Long questionId);
 }
