@@ -178,4 +178,22 @@ return true;
             throw new NoSuchElementException("Question not found with Id " + questionId);
         }
     }
+
+    public boolean deleteQuestionAndRelatedAnswers(long questionId) {
+        Optional<QuestionEntity> questionOptional = questionRepository.findById(questionId);
+        if (questionOptional.isPresent()) {
+            QuestionEntity questionEntity = questionOptional.get();
+            Long id = questionEntity.getId();
+            Optional<List<AnswerEntity>> allByQuestionId = answerRepository.findAllByQuestionId(id);
+            if (allByQuestionId.isPresent()){
+                List<AnswerEntity> answerEntities = allByQuestionId.get();
+                answerRepository.deleteAll(answerEntities);
+            }
+            questionRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }
