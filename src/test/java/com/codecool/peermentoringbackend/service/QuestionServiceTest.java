@@ -1,5 +1,6 @@
 package com.codecool.peermentoringbackend.service;
 
+import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.QModelWithId;
@@ -22,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest
@@ -49,6 +51,9 @@ public class QuestionServiceTest {
     private UserEntity voteUserEntity;
 
     private QuestionEntity questionEntity;
+    private QuestionEntity questionEntityTwo;
+
+    private AnswerEntity answerEntity;
 
     private QModelWithId questionModelTitle;
     private QModelWithId questionModelDesc;
@@ -58,14 +63,25 @@ public class QuestionServiceTest {
     @BeforeEach
     public void init(){
         questionService = new QuestionService(questionRepository, answerRepository, userRepository, technologyTagRepository, tagService);
+
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
         voteUserEntity = UserEntity.builder().username("voteuser").email("voteuser@email.com").password("password").votedQuestions(new HashSet<>()).build();
 
         questionEntity = QuestionEntity.builder().title("title").description("description").user(userEntity).vote(0L).voters(new HashSet<>()).build();
+        questionEntityTwo = QuestionEntity.builder().title("title").description("description").user(userEntity).vote(0L).voters(new HashSet<>()).build();
+
         questionEntity = questionRepository.save(questionEntity);
+        questionEntityTwo = questionRepository.save(questionEntityTwo);
+
+        answerEntity = AnswerEntity.builder().user(userEntity).question(questionEntity).build();
+
+        answerRepository.save(answerEntity);
+
         userEntity.setQuestions(Set.of(questionEntity));
+
         userEntity = userRepository.save(userEntity);
         voteUserEntity = userRepository.save(voteUserEntity);
+
         questionModelTitle = QModelWithId.builder().id(questionEntity.getId()).title("modifiedTitle").description("description").build();
         questionModelDesc = QModelWithId.builder().id(questionEntity.getId()).title("title").description("modifiedDescription").build();
         questionModelEmpty = QModelWithId.builder().id(questionEntity.getId()).title("").description("").build();
@@ -126,8 +142,23 @@ public class QuestionServiceTest {
         assertFalse(apiResponse.isSuccess());
     }
 
+    @Test
+    public void deleteQuestionAndRelatedAnswers_deleteQuestionWithAllAnswers_returnTrue(){
+        boolean isDeleted = questionService.deleteQuestionAndRelatedAnswers(questionEntity.getId());
+        assertThat(isDeleted).isTrue();
 
+    }
 
+    @Test
+    public void deleteQuestionAndRelatedAnswers_deleteQuestionWithNoAnswers_returnTrue(){
+        boolean isDeleted = questionService.deleteQuestionAndRelatedAnswers(questionEntityTwo.getId());
+        assertThat(isDeleted).isTrue();
+    }
 
+    @Test
+    public void deleteQuestionAndRelatedAnswers_noQuestionFound_returnFalse(){
+        boolean isDeleted = questionService.deleteQuestionAndRelatedAnswers(questionEntity.getId() + 1231231312);
+        assertThat(isDeleted).isFalse();
+    }
 
 }
