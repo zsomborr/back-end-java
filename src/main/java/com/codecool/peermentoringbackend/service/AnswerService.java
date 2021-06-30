@@ -56,6 +56,7 @@ public class AnswerService {
                     .submissionTime(LocalDateTime.now())
                     .user(userRepository.findDistinctByUsername(username))
                     .question(questionRepository.findDistinctById(answerModel.getQuestionId()))
+                    .vote((long) 0)
                     .build();
 
             answerRepository.save(answerEntity);
