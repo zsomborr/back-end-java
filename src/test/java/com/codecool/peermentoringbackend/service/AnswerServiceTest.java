@@ -97,13 +97,7 @@ class AnswerServiceTest {
     }
 
     @Test
-    public void deleteAnswer_answerIsAccepted_returnsFalse(){
-        boolean isDeleted = answerService.deleteAnswer(answerEntityTwo.getId());
-        assertThat(isDeleted).isFalse();
-    }
-
-    @Test
-    public void deleteAnswer_answerIsNotFound_throwsNoSuchElementException(){
-        assertThrows(NoSuchElementException.class, () -> answerService.deleteAnswer(answerEntityTwo.getId() + 11231231));
-    }
+    public void deleteAnswer_answerIsNotFound_returnsFalse(){
+        boolean isDeleted = answerService.deleteAnswer(answerEntityTwo.getId() + 11212123);
+        assertThat(isDeleted).isFalse(); }
 }
