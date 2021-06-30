@@ -18,6 +18,7 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AnswerService {
@@ -43,7 +44,7 @@ public class AnswerService {
             answer.setTransientData();
             if(answer.getUsername().equals(userEntity.getUsername())) answer.setMyAnswer(true);
         }
-        return answerEntities;
+        return answerEntities.stream().sorted(Comparator.comparing(AnswerEntity::isAccepted).reversed()).collect(Collectors.toList());
     }
 
     public boolean addNewAnswer(AnswerModel answerModel, String username) {

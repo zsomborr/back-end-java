@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/answers")
@@ -68,8 +69,17 @@ public class AnswerController {
 
 
     @PutMapping("/{answerId}/accept")
-    public void acceptAnswer(@PathVariable(name = "answerId") Long answerId){
-        answerService.acceptAnswer(answerId);
+    public ApiResponse acceptAnswer(@PathVariable(name = "answerId") Long answerId){
+        ApiResponse apiResponse = new ApiResponse();
+        try{
+            answerService.acceptAnswer(answerId);
+            apiResponse.setSuccess(true);
+            apiResponse.setMessage("Answer accepted successfully.");
+        } catch (NoSuchElementException e){
+            apiResponse.setSuccess(false);
+            apiResponse.setMessage(e.getMessage());
+        }
+        return apiResponse;
     }
   
     @DeleteMapping("/delete/{answerId}")
