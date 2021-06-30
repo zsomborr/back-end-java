@@ -96,4 +96,17 @@ public class AnswerController {
         }
         return apiResponse;
     }
+
+    @PutMapping("/vote/{answerId}")
+    public void voteAnswer(HttpServletRequest request, HttpServletResponse response, @PathVariable Long answerId) throws IOException {
+        String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
+        ApiResponse voteResponse = answerService.vote(answerId, usernameFromToken);
+        if (voteResponse.isSuccess()) {
+            response.setStatus(200);
+        } else {
+            response.setStatus(400);
+        }
+        response.getWriter().println(voteResponse.getMessage());
+
+    }
 }

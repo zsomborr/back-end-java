@@ -1,21 +1,15 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.AnswerEntity;
-import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.AnswerModel;
-import com.codecool.peermentoringbackend.model.QuestionModel;
+import com.codecool.peermentoringbackend.model.ApiResponse;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,12 +33,19 @@ public class AnswerService {
 
     public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(userNameFromToken);
-        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionId(questionId);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVote(questionId);
         for (AnswerEntity answer: answerEntities) {
             answer.setTransientData();
+            if(answer.getVoters().contains(userEntity)){
+                answer.setVoted(true);
+            }
             if(answer.getUsername().equals(userEntity.getUsername())) answer.setMyAnswer(true);
         }
-        return answerEntities.stream().sorted(Comparator.comparing(AnswerEntity::isAccepted).reversed()).collect(Collectors.toList());
+        return answerEntities
+                .stream()
+                .sorted(Comparator.comparing(AnswerEntity::isAccepted)
+                        .reversed())
+                .collect(Collectors.toList());
     }
 
     public boolean addNewAnswer(AnswerModel answerModel, String username) {
@@ -113,6 +114,25 @@ public class AnswerService {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public ApiResponse vote(Long answerId, String usernameFromToken) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
+        AnswerEntity answerEntity = answerRepository.findDistinctById(answerId);
+        if(answerEntity.getUser().getId().equals(userEntity.getId())){
+            return new ApiResponse(false, "user can't vote for their own answers!");
+        }
+        if(!answerEntity.getVoters().contains(userEntity)){
+            answerEntity.addUser(userEntity);
+            answerEntity.setVote(answerEntity.getVote() + 1);
+            answerRepository.save(answerEntity);
+            return new ApiResponse(true, "Successfully voted on answer: " + answerEntity.getId());
+        } else{
+            answerEntity.removeUser(userEntity);
+            answerEntity.setVote(answerEntity.getVote() - 1);
+            answerRepository.save(answerEntity);
+            return new ApiResponse(true, "Removed vote from answer: " + answerEntity.getId());
         }
     }
 }
