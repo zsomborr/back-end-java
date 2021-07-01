@@ -91,6 +91,7 @@ public class FilterService {
         for ( QuestionEntity q : all ) {
             if(q.getTechnologyTags().containsAll(fullTags)){
                 q.setUserData();
+                q.setNumberOfAnswers(q.getAnswers().size());
                 filtered.add(q);
             }
         }

@@ -51,6 +51,8 @@ public class QuestionEntity {
     @JsonIgnore
     Set<AnswerEntity> answers = new HashSet<>();
 
+    @Transient
+    private int numberOfAnswers;
 
     @Transient
     private Long userId_;
@@ -74,7 +76,6 @@ public class QuestionEntity {
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "votedQuestions")
     Set<UserEntity> voters = new HashSet<>();
-
 
     public void setUserData() {
         this.userId_ = user.getId();
