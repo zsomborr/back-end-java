@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import javax.security.auth.login.CredentialException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -35,13 +36,20 @@ public class RegistrationService {
         EmailValidator validator = EmailValidator.getInstance();
 
 
-        if (!validator.isValid(userModel.getEmail())) return new ApiResponse(false, "e-mail format not valid");
+        if (!validator.isValid(userModel.getEmail())) return new ApiResponse(false, "E-mail format not valid");
         if (userRepository.existsByEmail(userModel.getEmail()))
-            return new ApiResponse(false, "this email is already registered");
+            return new ApiResponse(false, "Email is already registered");
         if (userRepository.existsByUsername(userModel.getUsername()))
-            return new ApiResponse(false, "this username is already taken");
-        if (!validatorService.validateRegistration(userModel, 2, 20,  2, 20))
-            return new ApiResponse(false, "registration failed due to invalid credentials");
+            return new ApiResponse(false, "Username is already taken.");
+        int minNameLength = 2;
+        int maxNameLength = 20;
+        int minUserNameLength = 2;
+        int maxUserNameLength = 20;
+        try {
+            validatorService.validateRegistration(userModel, minNameLength, maxNameLength, minUserNameLength, maxUserNameLength);
+        } catch (CredentialException credentialException){
+            return new ApiResponse(false, credentialException.getMessage());
+        }
 
         UserEntity userEntity = UserEntity.builder()
                 .email(userModel.getEmail())

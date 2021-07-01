@@ -4,6 +4,8 @@ import com.codecool.peermentoringbackend.model.ApiResponse;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,15 +20,14 @@ public class RegistrationController {
     protected RegistrationService registrationService;
 
     @PostMapping(value = "/registration")
-    public void doRegistration(HttpServletResponse response, @RequestBody UserModel userModel) throws IOException {
+    public ResponseEntity<ApiResponse> doRegistration(@RequestBody UserModel userModel) throws IOException {
 
         ApiResponse apiResponse = registrationService.handleRegistration(userModel);
-        if (apiResponse.isSuccess()) {
-            response.setStatus(200);
+        if(apiResponse.isSuccess()){
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } else {
-            response.setStatus(400);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
-        response.getWriter().println(apiResponse.getMessage());
     }
 
 }
