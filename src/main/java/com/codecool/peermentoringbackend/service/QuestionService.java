@@ -41,6 +41,7 @@ public class QuestionService {
         List<QuestionEntity> questionEntities = questionRepository.findAllDesc();
         for (QuestionEntity question : questionEntities) {
             question.setUserData();
+            question.setNumberOfAnswers(question.getAnswers().size());
             if(question.getVoters().contains(userEntity)){
                 question.setVoted(true);
             }

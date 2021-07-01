@@ -20,14 +20,18 @@ public class SearchService {
     }
 
     public List<QuestionEntity> search(List<String> words){
-        Set<QuestionEntity> questionEntitiesSet = new LinkedHashSet<>();
+        List<QuestionEntity> questions = new ArrayList<>();
         for (String word : words) {
             Optional<List<QuestionEntity>> distinctByTitleLikeOrDescriptionLike = questionRepository.findDistinctByTitleContainingOrDescriptionContaining(word, word);
             if (distinctByTitleLikeOrDescriptionLike.isPresent()){
                 List<QuestionEntity> questionEntities = distinctByTitleLikeOrDescriptionLike.get();
-                questionEntitiesSet.addAll(questionEntities);
+                for (QuestionEntity questionEntity : questionEntities) {
+                    questionEntity.setUserData();
+                    questionEntity.setNumberOfAnswers(questionEntity.getAnswers().size());
+                    questions.add(questionEntity);
+                }
             }
         }
-        return new ArrayList<>(questionEntitiesSet);
+        return questions;
     }
 }
