@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/filter")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.herokuapp.com/"}, allowCredentials = "true")
 public class FilterController {
 
     @Autowired

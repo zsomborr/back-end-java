@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.herokuapp.com/"}, allowCredentials = "true")
 @RequestMapping("/auth")
 public class LoginController {
 
@@ -54,7 +54,7 @@ public class LoginController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity login(@RequestBody LoginCredential loginCredential) {
+    public ResponseEntity login(HttpServletRequest request, @RequestBody LoginCredential loginCredential) {
         try {
             String username = loginCredential.getUsername();
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, loginCredential.getPassword()));
@@ -65,10 +65,15 @@ public class LoginController {
 
 
             String token = jwtTokenServices.createToken(username, roles);
+            String requestScheme = request.getScheme();
+            boolean secure = !requestScheme.equals("http");
             ResponseCookie cookie = ResponseCookie
                     .from("authentication", token)
                     .maxAge(3600)  //18 hrs
-                    .path("/").httpOnly(true).secure(false).build();
+                    .path("/").httpOnly(true)
+                    .secure(secure)
+                    .sameSite("none")
+                    .build();
 
 
 
@@ -84,11 +89,13 @@ public class LoginController {
     }
 
     @GetMapping(value = "/logout")
-    public ResponseEntity logout(){
+    public ResponseEntity logout(HttpServletRequest request){
+        String requestScheme = request.getScheme();
+        boolean secure = !requestScheme.equals("http");
         ResponseCookie cookie = ResponseCookie
                 .from("authentication", "")
                 .maxAge(0)
-                .path("/").httpOnly(true).secure(false).build();
+                .path("/").httpOnly(true).secure(secure).sameSite("none").build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body("");
     }
 
