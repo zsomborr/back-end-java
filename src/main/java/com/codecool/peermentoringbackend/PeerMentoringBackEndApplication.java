@@ -34,7 +34,7 @@ public class PeerMentoringBackEndApplication {
     }
 
     @Bean
-    @Profile("production")
+    @Profile("development")
     public CommandLineRunner init() {
         return args -> {
 
