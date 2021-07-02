@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
-@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.herokuapp.com/"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app"}, allowCredentials = "true")
 public class TagController {
 
     @Autowired
