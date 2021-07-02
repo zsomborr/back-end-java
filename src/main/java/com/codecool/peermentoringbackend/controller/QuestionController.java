@@ -105,7 +105,7 @@ public class QuestionController {
     @DeleteMapping("/delete/{questionId}")
     public ApiResponse deleteQuestion(@PathVariable String questionId){
         // answer model structure is questionable
-        var apiResponse = new ApiResponse();
+        ApiResponse apiResponse = new ApiResponse();
         boolean success = questionService.deleteQuestionAndRelatedAnswers(Long.parseLong(questionId));
         if (success) {
             apiResponse.setSuccess(true);
