@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/answers")
-@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.herokuapp.com/"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app"}, allowCredentials = "true")
 public class AnswerController {
 
     @Autowired

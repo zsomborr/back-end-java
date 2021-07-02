@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/review")
-@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.herokuapp.com/"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app"}, allowCredentials = "true")
 public class ReviewController {
 
     @Autowired
