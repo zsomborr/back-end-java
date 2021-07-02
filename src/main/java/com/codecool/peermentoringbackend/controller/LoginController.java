@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app", "https://peermentor-analytics.netlify.app"}, allowCredentials = "true")
 @RequestMapping("/auth")
 public class LoginController {
 

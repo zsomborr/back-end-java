@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app", "https://peermentor-analytics.netlify.app"}, allowCredentials = "true")
 @RequestMapping("/reg")
 public class RegistrationController {
 
