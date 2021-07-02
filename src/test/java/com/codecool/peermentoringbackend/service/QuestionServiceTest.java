@@ -77,7 +77,10 @@ public class QuestionServiceTest {
 
         answerRepository.save(answerEntity);
 
-        userEntity.setQuestions(Set.of(questionEntity));
+        Set<QuestionEntity> questions = new HashSet<>();
+        questions.add(questionEntity);
+        userEntity.setQuestions(questions);
+
 
         userEntity = userRepository.save(userEntity);
         voteUserEntity = userRepository.save(voteUserEntity);
