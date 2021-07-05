@@ -67,12 +67,13 @@ public class LoginController {
             String token = jwtTokenServices.createToken(username, roles);
             String requestScheme = request.getScheme();
             boolean secure = !requestScheme.equals("http");
+            String sameSite = secure ? "none" : "strict";
             ResponseCookie cookie = ResponseCookie
                     .from("authentication", token)
                     .maxAge(3600)  //18 hrs
                     .path("/").httpOnly(true)
                     .secure(secure)
-                    .sameSite("none")
+                    .sameSite(sameSite)
                     .build();
 
 
@@ -92,6 +93,7 @@ public class LoginController {
     public ResponseEntity logout(HttpServletRequest request){
         String requestScheme = request.getScheme();
         boolean secure = !requestScheme.equals("http");
+        String sameSite = secure ? "none" : "strict";
         ResponseCookie cookie = ResponseCookie
                 .from("authentication", "")
                 .maxAge(0)
