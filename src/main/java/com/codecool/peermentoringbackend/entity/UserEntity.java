@@ -42,6 +42,8 @@ public class UserEntity {
     @Column
     private String password;
 
+    private Long score;
+
     @Column
     private LocalDateTime registrationDate;
 
