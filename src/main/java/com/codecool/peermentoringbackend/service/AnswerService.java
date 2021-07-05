@@ -23,13 +23,15 @@ public class AnswerService {
 
     private UserRepository userRepository;
 
+    private UserService userService;
+
     @Autowired
-    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository) {
+    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository, UserService userService) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
-
 
     public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(userNameFromToken);
@@ -128,11 +130,13 @@ public class AnswerService {
             answerEntity.addUser(userEntity);
             answerEntity.setVote(answerEntity.getVote() + 1);
             answerRepository.save(answerEntity);
+            userService.changeScoreById(answerEntity.getUser().getId(), 1);
             return new ApiResponse(true, "Successfully voted on answer: " + answerEntity.getId());
         } else{
             answerEntity.removeUser(userEntity);
             answerEntity.setVote(answerEntity.getVote() - 1);
             answerRepository.save(answerEntity);
+            userService.changeScoreById(answerEntity.getUser().getId(), -1);
             return new ApiResponse(true, "Removed vote from answer: " + answerEntity.getId());
         }
     }
