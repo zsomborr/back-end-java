@@ -112,6 +112,7 @@ public class PeerMentoringBackEndApplication {
                     .country("Hungary")
                     .username("test")
                     .password("{bcrypt}$2a$10$/A5s3AjcKnRem6lS3uwn5.hV.xZzqy6SK8mn4uRyBQXMj5RcHIUG6")
+                    .score(0L)
                     .build();
             userRepository.save(testUser);
 
@@ -123,6 +124,7 @@ public class PeerMentoringBackEndApplication {
                     .country("Hungary")
                     .username("test2")
                     .password("{bcrypt}$2a$10$/A5s3AjcKnRem6lS3uwn5.hV.xZzqy6SK8mn4uRyBQXMj5RcHIUG6")
+                    .score(0L)
                     .build();
             userRepository.save(testUser2);
 
