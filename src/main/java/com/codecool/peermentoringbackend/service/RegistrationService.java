@@ -59,6 +59,7 @@ public class RegistrationService {
                 .lastName(userModel.getLastName())
                 .registrationDate(LocalDateTime.now())
                 .roles(Collections.singletonList("ROLE_USER"))
+                .score(0L)
                 .build();
         userRepository.save(userEntity);
         return new ApiResponse(true, "success");
