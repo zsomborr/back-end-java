@@ -23,15 +23,18 @@ public class QuestionService {
 
     private UserRepository userRepository;
 
+    private UserService userService;
+
     private TechnologyTagRepository technologyTagRepository;
 
     private TagService tagService;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, TechnologyTagRepository technologyTagRepository, TagService tagService){
+    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, UserService userService, TechnologyTagRepository technologyTagRepository, TagService tagService) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
         this.technologyTagRepository = technologyTagRepository;
         this.tagService = tagService;
     }
@@ -140,10 +143,12 @@ return true;
             questionEntity.addUser(userEntity);
             questionEntity.setVote(questionEntity.getVote() + 1);
             questionRepository.save(questionEntity);
+            userService.changeScoreById(questionEntity.getUser().getId(), 1);
             return new ApiResponse(true, "Successfully voted on question: " + questionEntity.getId());
         } else{
             questionEntity.removeUser(userEntity);
             questionEntity.setVote(questionEntity.getVote() - 1);
+            userService.changeScoreById(questionEntity.getUser().getId(), -1);
             questionRepository.save(questionEntity);
             return new ApiResponse(true, "Removed vote from question: " + questionEntity.getId());
         }
