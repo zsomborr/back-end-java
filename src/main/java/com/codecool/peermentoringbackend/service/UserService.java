@@ -61,6 +61,7 @@ public class UserService {
         List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
         DiscordEntity discordEntity = discordRepository.getByUserId(userId);
+        Long score = userRepository.getUserScore(userId);
         if(discordEntity == null){
             return PublicUserModel.builder()
                     .firstName(userEntity.getFirstName())
