@@ -201,5 +201,16 @@ public class UserService {
 
     }
 
+    public void changeScoreById(Long userId, int amount){
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if(userEntityOptional.isPresent()){
+            UserEntity userEntity = userEntityOptional.get();
+            userEntity.setScore(userEntity.getScore() + amount);
+            userRepository.save(userEntity);
+        } else {
+            throw new NoSuchElementException("User not found with id " + userId);
+        }
+    }
+
 
 }
