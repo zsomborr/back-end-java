@@ -8,6 +8,7 @@ import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,27 +28,34 @@ public class QuestionService {
 
     private TagService tagService;
 
+    private ModelMapper modelMapper;
+
     @Autowired
-    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, TechnologyTagRepository technologyTagRepository, TagService tagService){
+    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, TechnologyTagRepository technologyTagRepository, TagService tagService, ModelMapper modelMapper){
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.userRepository = userRepository;
         this.technologyTagRepository = technologyTagRepository;
         this.tagService = tagService;
+        this.modelMapper = modelMapper;
     }
 
-    public List<QuestionEntity> getAll(String usernameFromToken) {
+    public List<PublicQuestionModel> getAll(String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         List<QuestionEntity> questionEntities = questionRepository.findAllDesc();
+        List<PublicQuestionModel> publicQuestionModels = new ArrayList<>();
         for (QuestionEntity question : questionEntities) {
-            question.setUserData();
-            question.setNumberOfAnswers(question.getAnswers().size());
+            PublicQuestionModel publicQuestionModel = modelMapper.map(question, PublicQuestionModel.class);
+            publicQuestionModel.setUsername(question.getUser().getUsername());
+            publicQuestionModel.setUserId(question.getUser().getId());
+            publicQuestionModel.setNumberOfAnswers(question.getAnswers().size());
             if(question.getVoters().contains(userEntity)){
-                question.setVoted(true);
+                publicQuestionModel.setVoted(true);
             }
-            if(question.getUsername().equals(userEntity.getUsername())) question.setMyQuestion(true);
+            if(question.getUser().getUsername().equals(userEntity.getUsername())) publicQuestionModel.setMyQuestion(true);
+            publicQuestionModels.add(publicQuestionModel);
         }
-        return questionEntities;
+        return publicQuestionModels;
     }
 
     public boolean addNewQuestion(QuestionModel questionModel, String username) {
