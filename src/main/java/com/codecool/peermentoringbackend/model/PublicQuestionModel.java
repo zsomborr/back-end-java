@@ -1,11 +1,14 @@
 package com.codecool.peermentoringbackend.model;
 
+import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +31,13 @@ public class PublicQuestionModel {
     private Long vote;
 
     private boolean anonym;
+
+    private int numberOfAnswers;
+
+    private boolean voted;
+
+    private boolean myQuestion;
+
+    private Set<TechnologyEntity> technologyTags;
 
 }
