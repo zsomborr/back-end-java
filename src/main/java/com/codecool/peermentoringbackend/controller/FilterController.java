@@ -35,7 +35,7 @@ public class FilterController {
     }
 
     @PostMapping("/get-mentor-by-name")
-    private UserEntity getMentorByName(@RequestBody UserModel userModel){
+    private PublicUserModel getMentorByName(@RequestBody UserModel userModel){
         return filterService.getMentorByName(userModel.getUsername());
     }
 

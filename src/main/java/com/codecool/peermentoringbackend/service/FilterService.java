@@ -49,8 +49,12 @@ public class FilterService {
         return mentors;
     }
 
-    public UserEntity getMentorByName(String username) {
-        return userRepository.findDistinctByUsername(username);
+    public PublicUserModel getMentorByName(String username) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(username);
+        PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
+        Rank rank = userService.getUserRank(userEntity.getId());
+        publicUserModel.setRank(rank);
+        return publicUserModel;
     }
 
 
