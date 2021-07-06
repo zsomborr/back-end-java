@@ -4,6 +4,7 @@ import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.ProjectsAndTechs;
+import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.TagsModel;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.service.FilterService;
@@ -29,7 +30,7 @@ public class FilterController {
 
 
     @GetMapping("/get-mentors")
-    private List<UserEntity> getAllMentors(){
+    private List<PublicUserModel> getAllMentors(){
         return filterService.getAllMentors();
     }
 
