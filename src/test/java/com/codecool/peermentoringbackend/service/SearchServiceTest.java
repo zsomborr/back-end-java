@@ -2,11 +2,13 @@ package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.PublicQuestionModel;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -39,9 +41,16 @@ class SearchServiceTest {
     private QuestionEntity questionFour;
     private QuestionEntity questionFive;
 
+    private PublicQuestionModel questionModelOne;
+    private PublicQuestionModel questionModelTwo;
+    private PublicQuestionModel questionModelThree;
+    private PublicQuestionModel questionModelFour;
+    private PublicQuestionModel questionModelFive;
+
     @BeforeEach
     public void setup(){
-        searchService = new SearchService(questionRepository);
+        ModelMapper modelMapper = new ModelMapper();
+        searchService = new SearchService(questionRepository, modelMapper);
 
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
 
@@ -54,41 +63,47 @@ class SearchServiceTest {
         userRepository.save(userEntity);
 
         questionRepository.saveAll(Arrays.asList(questionOne, questionTwo, questionThree, questionFour, questionFive));
+        questionModelOne = PublicQuestionModel.builder().id(questionOne.getId()).userId(userEntity.getId()).username(userEntity.getUsername()).title("this test is working one four.").description("this test is working.").build();
+        questionModelTwo = PublicQuestionModel.builder().id(questionTwo.getId()).userId(userEntity.getId()).username(userEntity.getUsername()).title("this test is working.").description("this is not working two.").build();
+        questionModelThree = PublicQuestionModel.builder().id(questionThree.getId()).userId(userEntity.getId()).username(userEntity.getUsername()).title("this is not working three.").description("this test is working three.").build();
+        questionModelFour = PublicQuestionModel.builder().id(questionFour.getId()).userId(userEntity.getId()).username(userEntity.getUsername()).title("this is not working now.").description("this is not working.").build();
+        questionModelFive = PublicQuestionModel.builder().id(questionFive.getId()).userId(userEntity.getId()).username(userEntity.getUsername()).title("this is not working.").description("this is not working now.").build();
+
     }
 
     @Test
     public void search_singleWordInMiddleOfTitle_returnsQuestionOne(){
-        List<QuestionEntity> questionEntities = searchService.search(Collections.singletonList("one"));
-        assertThat(questionEntities).containsExactlyInAnyOrder(questionOne);
+        List<PublicQuestionModel> questionEntities = searchService.search(Collections.singletonList("one"));
+        assertThat(questionEntities).containsExactlyInAnyOrder(questionModelOne);
     }
 
     @Test
     public void search_singleWordInMiddleOfDescription_returnsQuestionTwo(){
-        List<QuestionEntity> questionEntities = searchService.search(Collections.singletonList("two"));
-        assertThat(questionEntities).containsExactlyInAnyOrder(questionTwo);
+        List<PublicQuestionModel> questionEntities = searchService.search(Collections.singletonList("two"));
+        assertThat(questionEntities).containsExactlyInAnyOrder(questionModelTwo);
     }
 
     @Test
     public void search_singleWordInMiddleOfTitleAndDescription_returnsQuestionThree(){
-        List<QuestionEntity> questionEntities = searchService.search(Collections.singletonList("three"));
-        assertThat(questionEntities).containsExactlyInAnyOrder(questionThree);
+        List<PublicQuestionModel> questionEntities = searchService.search(Collections.singletonList("three"));
+        assertThat(questionEntities).containsExactlyInAnyOrder(questionModelThree);
     }
 
     @Test
     public void search_singleWordInMiddleOfTitleAndDescriptionAndInBothSeparately_returnsQuestionOneTwoAndThree(){
-        List<QuestionEntity> questionEntities = searchService.search(Collections.singletonList("test"));
-        assertThat(questionEntities).containsExactlyInAnyOrder(questionOne, questionTwo, questionThree);
+        List<PublicQuestionModel> questionEntities = searchService.search(Collections.singletonList("test"));
+        assertThat(questionEntities).containsExactlyInAnyOrder(questionModelOne, questionModelTwo, questionModelThree);
     }
 
     @Test
     public void search_twoWordsInMiddleOfTitleAndDescription_returnsQuestionOneFourAndFive(){
-        List<QuestionEntity> questionEntities = searchService.search(Arrays.asList("four", "now"));
-        assertThat(questionEntities).containsExactlyInAnyOrder(questionOne, questionFour, questionFive);
+        List<PublicQuestionModel> questionEntities = searchService.search(Arrays.asList("four", "now"));
+        assertThat(questionEntities).containsExactlyInAnyOrder(questionModelOne, questionModelFour, questionModelFive);
     }
 
     @Test
     public void search_singleWordInNoneOfTheQuestions_returnsEmptyList(){
-        List<QuestionEntity> questionEntities = searchService.search(Collections.singletonList("fail"));
+        List<PublicQuestionModel> questionEntities = searchService.search(Collections.singletonList("fail"));
         assertThat(questionEntities).isEmpty();
     }
 }
