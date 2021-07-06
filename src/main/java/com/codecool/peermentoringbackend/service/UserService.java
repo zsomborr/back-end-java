@@ -18,29 +18,19 @@ import java.util.*;
 @Service
 public class UserService {
 
-//    @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
     private ProjectTagRepository projectTagRepository;
 
-//    @Autowired
     TechnologyTagRepository technologyTagRepository;
 
-//    @Autowired
     JwtTokenServices jwtTokenServices;
 
-//    @Autowired
     QuestionRepository questionRepository;
 
-//    @Autowired
     AnswerRepository answerRepository;
 
-//    @Autowired
     DiscordRepository discordRepository;
-
-//    @PersistenceContext
-//    private EntityManager entityManager;
 
     @Autowired
     public UserService(UserRepository userRepository, ProjectTagRepository projectTagRepository, TechnologyTagRepository technologyTagRepository, JwtTokenServices jwtTokenServices, QuestionRepository questionRepository, AnswerRepository answerRepository, DiscordRepository discordRepository) {
@@ -61,7 +51,7 @@ public class UserService {
         List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
         DiscordEntity discordEntity = discordRepository.getByUserId(userId);
-        Long score = userRepository.getUserScore(userId);
+        Rank rank = getUserRank(userId);
         if(discordEntity == null){
             return PublicUserModel.builder()
                     .firstName(userEntity.getFirstName())
@@ -73,6 +63,7 @@ public class UserService {
                     .email(userEntity.getEmail())
                     .projectTags(projectTags)
                     .technologyTags(technologyTags)
+                    .rank(rank)
                     .build();
 
         } else{
@@ -89,6 +80,7 @@ public class UserService {
                     .discordId(discordEntity.getDiscordId())
                     .discordUsername(discordEntity.getDiscordUsername())
                     .discriminator(discordEntity.getDiscriminator())
+                    .rank(rank)
                     .build();
         }
 
@@ -200,6 +192,12 @@ public class UserService {
             return true;
         }
 
+    }
+
+    public Rank getUserRank(Long userId){
+        Long score = userRepository.getUserScore(userId);
+        Optional<Rank> rankOptional = Rank.getRankByScore(score);
+        return rankOptional.orElse(Rank.NOVICE);
     }
 
 

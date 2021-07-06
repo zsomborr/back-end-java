@@ -38,4 +38,6 @@ public class PublicUserModel {
     private String discordUsername;
 
     private Long discriminator;
+
+    private Rank rank;
 }
