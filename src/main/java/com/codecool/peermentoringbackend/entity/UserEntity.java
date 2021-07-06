@@ -104,7 +104,4 @@ public class UserEntity {
     @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private DiscordEntity discordEntity;
-
-    @Enumerated(EnumType.STRING)
-    private Rank rank;
 }

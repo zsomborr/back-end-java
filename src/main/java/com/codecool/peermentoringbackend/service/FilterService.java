@@ -81,10 +81,6 @@ public class FilterService {
         } else{
             mentorsByAllTags = userRepository.findAll();
         }
-        for(UserEntity userEntity: mentorsByAllTags){
-            Rank rank = userService.getUserRank(userEntity.getId());
-            userEntity.setRank(rank);
-        }
         return mentorsByAllTags;
     }
 
