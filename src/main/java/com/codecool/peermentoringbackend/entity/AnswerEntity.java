@@ -52,31 +52,6 @@ public class AnswerEntity {
     @Column
     private  boolean accepted;
 
-    @Transient
-    private Long userId_;
-
-    @Transient
-    private String username;
-
-    @Transient
-    private Long questionId_;
-
-    @Transient
-    private String questionTitle;
-
-    @Transient
-    private boolean voted;
-
-    @Transient
-    private boolean myAnswer;
-
-    public void setTransientData() {
-        this.userId_ = user.getId();
-        this.username = user.getUsername();
-        this.questionId_ = question.getId();
-        this.questionTitle = question.getTitle();
-    }
-
     public void addUser(UserEntity userEntity) {
         this.voters.add(userEntity);
         userEntity.getVotedAnswers().add(this);

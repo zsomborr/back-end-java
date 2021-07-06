@@ -24,4 +24,14 @@ public class PublicAnswerModel {
     private String username;
 
     private Long questionId;
+
+    private Long vote;
+
+    private String questionTitle;
+
+    private boolean voted;
+
+    private boolean myAnswer;
+
+    private boolean accepted;
 }

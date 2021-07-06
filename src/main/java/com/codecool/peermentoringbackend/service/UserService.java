@@ -141,10 +141,17 @@ public class UserService {
             publicQuestionModel.setNumberOfAnswers(questionEntity.getAnswers().size());
             userQuestions.add(publicQuestionModel);
         }
-        List<AnswerEntity> userAnswers = answerRepository.findAnswerEntitiesByUser(userEntity);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByUser(userEntity);
+        List<PublicAnswerModel> userAnswers = new ArrayList<>();
 
-        for (AnswerEntity answer : userAnswers) {
-            answer.setTransientData();
+        for (AnswerEntity answerEntity : answerEntities) {
+            PublicAnswerModel publicAnswerModel = modelMapper.map(answerEntity, PublicAnswerModel.class);
+            publicAnswerModel.setUsername(answerEntity.getUser().getUsername());
+            publicAnswerModel.setUserId(answerEntity.getUser().getId());
+            publicAnswerModel.setQuestionId(answerEntity.getQuestion().getId());
+            publicAnswerModel.setQuestionTitle(answerEntity.getQuestion().getTitle());
+            userAnswers.add(publicAnswerModel);
+
         }
         return UserDataQAndAModel.builder()
                 .firstName(userEntity.getFirstName())

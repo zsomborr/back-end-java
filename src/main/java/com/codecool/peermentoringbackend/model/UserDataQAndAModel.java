@@ -29,5 +29,5 @@ public class UserDataQAndAModel {
 
     private List<PublicQuestionModel> userQuestions;
 
-    private List<AnswerEntity> userAnswers;
+    private List<PublicAnswerModel> userAnswers;
 }
