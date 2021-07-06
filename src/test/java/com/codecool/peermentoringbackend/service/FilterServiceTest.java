@@ -38,6 +38,9 @@ class FilterServiceTest {
     @Autowired
     private ProjectTagRepository projectTagRepository;
 
+    @Autowired
+    private UserService userService;
+
     private FilterService filterService;
 
     private final List<TechnologyEntity> filledTechnologyEntities = new ArrayList<>();
@@ -64,7 +67,7 @@ class FilterServiceTest {
 
     @BeforeEach
     public void setup(){
-        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository);
+        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService);
 
         technologyEntityOne = TechnologyEntity.builder().technologyTag("tech1").build();
         technologyEntityTwo = TechnologyEntity.builder().technologyTag("tech2").build();

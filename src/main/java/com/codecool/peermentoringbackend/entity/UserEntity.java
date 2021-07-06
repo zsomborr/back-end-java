@@ -1,6 +1,7 @@
 package com.codecool.peermentoringbackend.entity;
 
 import com.codecool.peermentoringbackend.model.Module_;
+import com.codecool.peermentoringbackend.model.Rank;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -103,4 +104,7 @@ public class UserEntity {
     @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private DiscordEntity discordEntity;
+
+    @Enumerated(EnumType.STRING)
+    private Rank rank;
 }

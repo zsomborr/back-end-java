@@ -4,6 +4,7 @@ import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.Rank;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
@@ -21,15 +22,22 @@ public class FilterService {
 
     private TechnologyTagRepository technologyTagRepository;
 
+    private UserService userService;
+
     @Autowired
-    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository) {
+    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository, UserService userService) {
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
         this.technologyTagRepository = technologyTagRepository;
+        this.userService = userService;
     }
 
     public List<UserEntity> getAllMentors() {
         List<UserEntity> techOrProjectTags = userRepository.getIfHasProjectOrTechTags();
+        for(UserEntity userEntity: techOrProjectTags){
+            Rank rank = userService.getUserRank(userEntity.getId());
+            userEntity.setRank(rank);
+        }
         if(!techOrProjectTags.isEmpty()){
             return techOrProjectTags;
         } else {
@@ -65,6 +73,10 @@ public class FilterService {
         } else{
             mentorsByAllTags = userRepository.findAll();
         }
+        for(UserEntity userEntity: mentorsByAllTags){
+            Rank rank = userService.getUserRank(userEntity.getId());
+            userEntity.setRank(rank);
+        }
         return mentorsByAllTags;
     }
 
@@ -74,6 +86,8 @@ public class FilterService {
             if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
                 results.add(userEntity);
             }
+            Rank rank = userService.getUserRank(userEntity.getId());
+            userEntity.setRank(rank);
         }
         return results;
     }
