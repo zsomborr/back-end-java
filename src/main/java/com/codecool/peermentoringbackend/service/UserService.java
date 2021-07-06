@@ -132,10 +132,14 @@ public class UserService {
     public UserDataQAndAModel getLoggedInUserPage(HttpServletRequest request) {
         String username = jwtTokenServices.getUsernameFromToken(request);
         UserEntity userEntity = userRepository.findDistinctByUsername(username);
-        List<QuestionEntity> userQuestions = questionRepository.findQuestionEntitiesByUser(userEntity);
-
-        for (QuestionEntity question : userQuestions) {
-            question.setUserData();
+        List<QuestionEntity> questionEntities = questionRepository.findQuestionEntitiesByUser(userEntity);
+        List<PublicQuestionModel> userQuestions = new ArrayList<>();
+        for (QuestionEntity questionEntity : questionEntities) {
+            PublicQuestionModel publicQuestionModel = modelMapper.map(questionEntity, PublicQuestionModel.class);
+            publicQuestionModel.setUsername(questionEntity.getUser().getUsername());
+            publicQuestionModel.setUserId(questionEntity.getUser().getId());
+            publicQuestionModel.setNumberOfAnswers(questionEntity.getAnswers().size());
+            userQuestions.add(publicQuestionModel);
         }
         List<AnswerEntity> userAnswers = answerRepository.findAnswerEntitiesByUser(userEntity);
 

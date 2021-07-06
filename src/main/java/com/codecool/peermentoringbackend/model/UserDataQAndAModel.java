@@ -27,7 +27,7 @@ public class UserDataQAndAModel {
 
     private Module_ module;
 
-    private List<QuestionEntity> userQuestions;
+    private List<PublicQuestionModel> userQuestions;
 
     private List<AnswerEntity> userAnswers;
 }

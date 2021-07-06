@@ -4,6 +4,7 @@ import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.PublicQuestionModel;
 import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.Rank;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
@@ -99,9 +100,9 @@ public class FilterService {
     }
 
 
-    public List<QuestionEntity> filterQuestionsByTags(List<TechnologyEntity> tags) {
+    public List<PublicQuestionModel> filterQuestionsByTags(List<TechnologyEntity> tags) {
         List<QuestionEntity> all = questionRepository.findAllDesc();
-        List<QuestionEntity> filtered = new ArrayList<>();
+        List<PublicQuestionModel> filtered = new ArrayList<>();
         List<TechnologyEntity> fullTags = new ArrayList<>();
 
         for ( TechnologyEntity t:tags ) {
@@ -110,9 +111,11 @@ public class FilterService {
 
         for ( QuestionEntity q : all ) {
             if(q.getTechnologyTags().containsAll(fullTags)){
-                q.setUserData();
-                q.setNumberOfAnswers(q.getAnswers().size());
-                filtered.add(q);
+                PublicQuestionModel publicQuestionModel = modelMapper.map(q, PublicQuestionModel.class);
+                publicQuestionModel.setUsername(q.getUser().getUsername());
+                publicQuestionModel.setUserId(q.getUser().getId());
+                publicQuestionModel.setNumberOfAnswers(q.getAnswers().size());
+                filtered.add(publicQuestionModel);
             }
         }
         return filtered;

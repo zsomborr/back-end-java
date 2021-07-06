@@ -51,21 +51,6 @@ public class QuestionEntity {
     @JsonIgnore
     Set<AnswerEntity> answers = new HashSet<>();
 
-    @Transient
-    private int numberOfAnswers;
-
-    @Transient
-    private Long userId_;
-
-    @Transient
-    private String username;
-
-    @Transient
-    private boolean voted;
-
-    @Transient
-    private boolean myQuestion;
-
     @ManyToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -76,15 +61,6 @@ public class QuestionEntity {
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "votedQuestions")
     Set<UserEntity> voters = new HashSet<>();
-
-    public void setUserData() {
-        this.userId_ = user.getId();
-        this.username = user.getUsername();
-    }
-
-    public void setVoterData() {
-        this.voted = true;
-    }
 
     public void addUser(UserEntity userEntity) {
         this.voters.add(userEntity);

@@ -13,6 +13,8 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -61,7 +63,8 @@ public class QuestionServiceTest {
 
     @BeforeEach
     public void init(){
-        questionService = new QuestionService(questionRepository, answerRepository, userRepository, technologyTagRepository, tagService);
+        ModelMapper modelMapper = new ModelMapper();
+        questionService = new QuestionService(questionRepository, answerRepository, userRepository, technologyTagRepository, tagService, modelMapper);
 
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
         voteUserEntity = UserEntity.builder().username("voteuser").email("voteuser@email.com").password("password").votedQuestions(new HashSet<>()).build();
