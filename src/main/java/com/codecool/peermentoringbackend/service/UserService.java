@@ -146,7 +146,7 @@ public class UserService {
 
         for (AnswerEntity answerEntity : answerEntities) {
             PublicAnswerModel publicAnswerModel = modelMapper.map(answerEntity, PublicAnswerModel.class);
-            publicAnswerModel.setUsername(answerEntity.getUsername());
+            publicAnswerModel.setUsername(answerEntity.getUser().getUsername());
             publicAnswerModel.setUserId(answerEntity.getUser().getId());
             publicAnswerModel.setQuestionId(answerEntity.getQuestion().getId());
             publicAnswerModel.setQuestionTitle(answerEntity.getQuestion().getTitle());
