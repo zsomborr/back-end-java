@@ -6,12 +6,14 @@ import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.repository.ProjectTagRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.ui.ModelMap;
 
 import java.util.Arrays;
 
@@ -31,6 +33,11 @@ public class PeerMentoringBackEndApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(PeerMentoringBackEndApplication.class, args);
+    }
+
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
     }
 
     @Bean
