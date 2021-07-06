@@ -40,6 +40,11 @@ class AnswerServiceTest {
     @MockBean
     private UserRepository userRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    private MapperService mapperService;
+
     private AnswerService answerService;
 
     private UserEntity userEntity;
@@ -53,8 +58,8 @@ class AnswerServiceTest {
 
     @BeforeEach
     public void setup(){
-        ModelMapper modelMapper = new ModelMapper();
-        answerService = new AnswerService(answerRepository,questionRepository, userRepository, modelMapper);
+        mapperService = new MapperService(modelMapper);
+        answerService = new AnswerService(answerRepository,questionRepository, userRepository, mapperService);
         userEntity = UserEntity.builder().username("testuser").id(1L).email("testuser@email.com").password("password").build();
         questionEntity = QuestionEntity.builder().user(userEntity).build();
         answerEntityOne = AnswerEntity.builder().content("sample").user(userEntity).question(questionEntity).build();

@@ -16,12 +16,12 @@ import java.util.*;
 public class SearchService {
 
     private QuestionRepository questionRepository;
-    private ModelMapper modelMapper;
+    private MapperService mapperService;
 
     @Autowired
-    public SearchService(QuestionRepository questionRepository, ModelMapper modelMapper) {
+    public SearchService(QuestionRepository questionRepository, MapperService mapperService) {
         this.questionRepository = questionRepository;
-        this.modelMapper = modelMapper;
+        this.mapperService = mapperService;
     }
 
     public List<PublicQuestionModel> search(List<String> words){
@@ -30,13 +30,7 @@ public class SearchService {
             Optional<List<QuestionEntity>> distinctByTitleLikeOrDescriptionLike = questionRepository.findDistinctByTitleContainingOrDescriptionContaining(word, word);
             if (distinctByTitleLikeOrDescriptionLike.isPresent()){
                 List<QuestionEntity> questionEntities = distinctByTitleLikeOrDescriptionLike.get();
-                for (QuestionEntity questionEntity : questionEntities) {
-                    PublicQuestionModel publicQuestionModel = modelMapper.map(questionEntity, PublicQuestionModel.class);
-                    publicQuestionModel.setUsername(questionEntity.getUser().getUsername());
-                    publicQuestionModel.setUserId(questionEntity.getUser().getId());
-                    publicQuestionModel.setNumberOfAnswers(questionEntity.getAnswers().size());
-                    questions.add(publicQuestionModel);
-                }
+                questions = mapperService.mapQuestionEntityCollection(questionEntities);
             }
         }
         return questions;
