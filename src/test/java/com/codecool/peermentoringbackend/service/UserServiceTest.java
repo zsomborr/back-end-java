@@ -50,6 +50,9 @@ class UserServiceTest {
     @MockBean
     private DiscordRepository discordRepository;
 
+    @Autowired
+    private MapperService mapperService;
+
 
 
     private UserEntity userEntity;
@@ -58,8 +61,7 @@ class UserServiceTest {
 
     @BeforeAll
     public void init(){
-        ModelMapper modelMapper = new ModelMapper();
-        userService = new UserService(userRepository, projectTagRepository, technologyTagRepository, jwtTokenServices, questionRepository, answerRepository, discordRepository, modelMapper);
+        userService = new UserService(userRepository, projectTagRepository, technologyTagRepository, jwtTokenServices, questionRepository, answerRepository, discordRepository, mapperService);
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
         userEntity = userRepository.save(userEntity);
     }

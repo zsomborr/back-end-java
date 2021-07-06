@@ -42,6 +42,9 @@ class FilterServiceTest {
     @MockBean
     private UserService userService;
 
+    @Autowired
+    private MapperService mapperService;
+
     private FilterService filterService;
 
     private final List<TechnologyEntity> filledTechnologyEntities = new ArrayList<>();
@@ -68,8 +71,7 @@ class FilterServiceTest {
 
     @BeforeEach
     public void setup(){
-        ModelMapper modelMapper = new ModelMapper();
-        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService, modelMapper);
+        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService, mapperService);
 
         technologyEntityOne = TechnologyEntity.builder().technologyTag("tech1").build();
         technologyEntityTwo = TechnologyEntity.builder().technologyTag("tech2").build();

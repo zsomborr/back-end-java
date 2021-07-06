@@ -31,6 +31,9 @@ class SearchServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MapperService mapperService;
+
     private SearchService searchService;
 
     private UserEntity userEntity;
@@ -49,8 +52,7 @@ class SearchServiceTest {
 
     @BeforeEach
     public void setup(){
-        ModelMapper modelMapper = new ModelMapper();
-        searchService = new SearchService(questionRepository, modelMapper);
+        searchService = new SearchService(questionRepository, mapperService);
 
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
 

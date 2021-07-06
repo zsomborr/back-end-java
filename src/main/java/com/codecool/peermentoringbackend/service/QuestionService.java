@@ -29,27 +29,22 @@ public class QuestionService {
 
     private TagService tagService;
 
-    private ModelMapper modelMapper;
+    private MapperService mapperService;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, TechnologyTagRepository technologyTagRepository, TagService tagService, ModelMapper modelMapper){
+    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository, UserRepository userRepository, TechnologyTagRepository technologyTagRepository, TagService tagService, MapperService mapperService){
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.userRepository = userRepository;
         this.technologyTagRepository = technologyTagRepository;
         this.tagService = tagService;
-        this.modelMapper = modelMapper;
+        this.mapperService = mapperService;
     }
 
     public List<PublicQuestionModel> getAll(String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         List<QuestionEntity> questionEntities = questionRepository.findAllDesc();
-        List<PublicQuestionModel> publicQuestionModels = new ArrayList<>();
-        for (QuestionEntity question : questionEntities) {
-            PublicQuestionModel publicQuestionModel = mapEntityToPublicQuestionModel(question, userEntity);
-            publicQuestionModels.add(publicQuestionModel);
-        }
-        return publicQuestionModels;
+        return mapperService.mapQuestionEntityCollection(questionEntities, userEntity);
     }
 
     public boolean addNewQuestion(QuestionModel questionModel, String username) {
@@ -151,8 +146,7 @@ return true;
         Optional<QuestionEntity> questionEntityOptional = questionRepository.findById(questionId);
         if(questionEntityOptional.isPresent()){
             QuestionEntity questionEntity = questionEntityOptional.get();
-            PublicQuestionModel publicQuestionModel = mapEntityToPublicQuestionModel(questionEntity, userEntity);
-            return publicQuestionModel;
+            return mapperService.mapEntityToPublicQuestionModel(questionEntity, userEntity);
         } else {
             throw new NoSuchElementException("Question not found with Id " + questionId);
         }
@@ -174,17 +168,5 @@ return true;
             return false;
         }
 
-    }
-
-    private PublicQuestionModel mapEntityToPublicQuestionModel(QuestionEntity questionEntity, UserEntity userEntity){
-        PublicQuestionModel publicQuestionModel = modelMapper.map(questionEntity, PublicQuestionModel.class);
-        publicQuestionModel.setUsername(questionEntity.getUser().getUsername());
-        publicQuestionModel.setUserId(questionEntity.getUser().getId());
-        publicQuestionModel.setNumberOfAnswers(questionEntity.getAnswers().size());
-        if(questionEntity.getVoters().contains(userEntity)){
-            publicQuestionModel.setVoted(true);
-        }
-        if(questionEntity.getUser().getUsername().equals(userEntity.getUsername())) publicQuestionModel.setMyQuestion(true);
-        return publicQuestionModel;
     }
 }

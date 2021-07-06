@@ -33,10 +33,10 @@ public class UserService {
 
     DiscordRepository discordRepository;
 
-    private ModelMapper modelMapper;
+    private MapperService mapperService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ProjectTagRepository projectTagRepository, TechnologyTagRepository technologyTagRepository, JwtTokenServices jwtTokenServices, QuestionRepository questionRepository, AnswerRepository answerRepository, DiscordRepository discordRepository, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, ProjectTagRepository projectTagRepository, TechnologyTagRepository technologyTagRepository, JwtTokenServices jwtTokenServices, QuestionRepository questionRepository, AnswerRepository answerRepository, DiscordRepository discordRepository, MapperService mapperService) {
         this.userRepository = userRepository;
         this.projectTagRepository = projectTagRepository;
         this.technologyTagRepository = technologyTagRepository;
@@ -44,7 +44,7 @@ public class UserService {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.discordRepository = discordRepository;
-        this.modelMapper = modelMapper;
+        this.mapperService = mapperService;
     }
 
     public PublicUserModel getPublicUserDataByUserId(Long userId) {
@@ -53,8 +53,7 @@ public class UserService {
         if(userEntity == null) return null;
         DiscordEntity discordEntity = discordRepository.getByUserId(userId);
         Rank rank = getUserRank(userId);
-        PublicUserModel publicUserModel =  modelMapper.map(userEntity, PublicUserModel.class);
-        publicUserModel.setRank(rank);
+        PublicUserModel publicUserModel = mapperService.mapEntityToPublicUserModel(userEntity, rank);
         if(discordEntity != null){
             publicUserModel.setDiscordId(discordEntity.getDiscordId());
             publicUserModel.setDiscordUsername(discordEntity.getDiscordUsername());
@@ -133,26 +132,10 @@ public class UserService {
         String username = jwtTokenServices.getUsernameFromToken(request);
         UserEntity userEntity = userRepository.findDistinctByUsername(username);
         List<QuestionEntity> questionEntities = questionRepository.findQuestionEntitiesByUser(userEntity);
-        List<PublicQuestionModel> userQuestions = new ArrayList<>();
-        for (QuestionEntity questionEntity : questionEntities) {
-            PublicQuestionModel publicQuestionModel = modelMapper.map(questionEntity, PublicQuestionModel.class);
-            publicQuestionModel.setUsername(questionEntity.getUser().getUsername());
-            publicQuestionModel.setUserId(questionEntity.getUser().getId());
-            publicQuestionModel.setNumberOfAnswers(questionEntity.getAnswers().size());
-            userQuestions.add(publicQuestionModel);
-        }
+        List<PublicQuestionModel> userQuestions = mapperService.mapQuestionEntityCollection(questionEntities, userEntity);
         List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByUser(userEntity);
-        List<PublicAnswerModel> userAnswers = new ArrayList<>();
+        List<PublicAnswerModel> userAnswers = mapperService.mapAnswerEntityCollection(answerEntities, userEntity);
 
-        for (AnswerEntity answerEntity : answerEntities) {
-            PublicAnswerModel publicAnswerModel = modelMapper.map(answerEntity, PublicAnswerModel.class);
-            publicAnswerModel.setUsername(answerEntity.getUser().getUsername());
-            publicAnswerModel.setUserId(answerEntity.getUser().getId());
-            publicAnswerModel.setQuestionId(answerEntity.getQuestion().getId());
-            publicAnswerModel.setQuestionTitle(answerEntity.getQuestion().getTitle());
-            userAnswers.add(publicAnswerModel);
-
-        }
         return UserDataQAndAModel.builder()
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())

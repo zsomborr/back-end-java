@@ -48,6 +48,9 @@ public class QuestionServiceTest {
     @MockBean
     private TechnologyTagRepository technologyTagRepository;
 
+    @Autowired
+    private MapperService mapperService;
+
     private UserEntity userEntity;
     private UserEntity voteUserEntity;
 
@@ -63,8 +66,7 @@ public class QuestionServiceTest {
 
     @BeforeEach
     public void init(){
-        ModelMapper modelMapper = new ModelMapper();
-        questionService = new QuestionService(questionRepository, answerRepository, userRepository, technologyTagRepository, tagService, modelMapper);
+        questionService = new QuestionService(questionRepository, answerRepository, userRepository, technologyTagRepository, tagService, mapperService);
 
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
         voteUserEntity = UserEntity.builder().username("voteuser").email("voteuser@email.com").password("password").votedQuestions(new HashSet<>()).build();

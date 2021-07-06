@@ -26,33 +26,22 @@ public class AnswerService {
 
     private UserRepository userRepository;
 
-    private ModelMapper modelMapper;
+    private MapperService mapperService;
+
 
     @Autowired
-    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository, ModelMapper modelMapper) {
+    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository, MapperService mapperService) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
+        this.mapperService = mapperService;
     }
 
 
     public List<PublicAnswerModel> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(userNameFromToken);
         List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVoteDesc(questionId);
-        List<PublicAnswerModel> answers = new ArrayList<>();
-        for (AnswerEntity answerEntity: answerEntities) {
-            PublicAnswerModel publicAnswerModel = modelMapper.map(answerEntity, PublicAnswerModel.class);
-            publicAnswerModel.setUsername(answerEntity.getUser().getUsername());
-            publicAnswerModel.setUserId(answerEntity.getUser().getId());
-            publicAnswerModel.setQuestionId(answerEntity.getQuestion().getId());
-            publicAnswerModel.setQuestionTitle(answerEntity.getQuestion().getTitle());
-            if(answerEntity.getVoters().contains(userEntity)){
-                publicAnswerModel.setVoted(true);
-            }
-            if(answerEntity.getUser().getUsername().equals(userEntity.getUsername())) publicAnswerModel.setMyAnswer(true);
-            answers.add(publicAnswerModel);
-        }
+        List<PublicAnswerModel> answers = mapperService.mapAnswerEntityCollection(answerEntities, userEntity);
         return answers
                 .stream()
                 .sorted(Comparator.comparing(PublicAnswerModel::isAccepted)

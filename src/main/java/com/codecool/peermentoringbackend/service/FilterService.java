@@ -27,24 +27,23 @@ public class FilterService {
 
     private UserService userService;
 
-    private ModelMapper modelMapper;
+    private MapperService mapperService;
 
     @Autowired
-    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository, UserService userService, ModelMapper modelMapper) {
+    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository, UserService userService, MapperService mapperService) {
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
         this.technologyTagRepository = technologyTagRepository;
         this.userService = userService;
-        this.modelMapper = modelMapper;
+        this.mapperService = mapperService;
     }
 
     public List<PublicUserModel> getAllMentors() {
         List<UserEntity> techOrProjectTags = userRepository.getIfHasProjectOrTechTags();
         List<PublicUserModel> mentors = new ArrayList<>();
         for(UserEntity userEntity: techOrProjectTags){
-            PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
             Rank rank = userService.getUserRank(userEntity.getId());
-            publicUserModel.setRank(rank);
+            PublicUserModel publicUserModel = mapperService.mapEntityToPublicUserModel(userEntity, rank);
             mentors.add(publicUserModel);
         }
         return mentors;
@@ -52,9 +51,8 @@ public class FilterService {
 
     public PublicUserModel getMentorByName(String username) {
         UserEntity userEntity = userRepository.findDistinctByUsername(username);
-        PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
         Rank rank = userService.getUserRank(userEntity.getId());
-        publicUserModel.setRank(rank);
+        PublicUserModel publicUserModel = mapperService.mapEntityToPublicUserModel(userEntity, rank);
         return publicUserModel;
     }
 
@@ -89,9 +87,8 @@ public class FilterService {
         List<PublicUserModel> results = new ArrayList<>();
         for(UserEntity userEntity : userEntities){
             if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
-                PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
                 Rank rank = userService.getUserRank(userEntity.getId());
-                publicUserModel.setRank(rank);
+                PublicUserModel publicUserModel = mapperService.mapEntityToPublicUserModel(userEntity, rank);
                 results.add(publicUserModel);
             }
 
@@ -111,10 +108,7 @@ public class FilterService {
 
         for ( QuestionEntity q : all ) {
             if(q.getTechnologyTags().containsAll(fullTags)){
-                PublicQuestionModel publicQuestionModel = modelMapper.map(q, PublicQuestionModel.class);
-                publicQuestionModel.setUsername(q.getUser().getUsername());
-                publicQuestionModel.setUserId(q.getUser().getId());
-                publicQuestionModel.setNumberOfAnswers(q.getAnswers().size());
+                PublicQuestionModel publicQuestionModel = mapperService.mapEntityToPublicQuestionModel(q);
                 filtered.add(publicQuestionModel);
             }
         }
