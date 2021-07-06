@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -50,13 +51,15 @@ class UserServiceTest {
     private DiscordRepository discordRepository;
 
 
+
     private UserEntity userEntity;
 
     private UserService userService;
 
     @BeforeAll
     public void init(){
-        userService = new UserService(userRepository, projectTagRepository, technologyTagRepository, jwtTokenServices, questionRepository, answerRepository, discordRepository);
+        ModelMapper modelMapper = new ModelMapper();
+        userService = new UserService(userRepository, projectTagRepository, technologyTagRepository, jwtTokenServices, questionRepository, answerRepository, discordRepository, modelMapper);
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
         userEntity = userRepository.save(userEntity);
     }

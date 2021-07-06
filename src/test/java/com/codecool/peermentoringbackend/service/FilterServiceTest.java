@@ -38,7 +38,7 @@ class FilterServiceTest {
     @Autowired
     private ProjectTagRepository projectTagRepository;
 
-    @Autowired
+    @MockBean
     private UserService userService;
 
     private FilterService filterService;
