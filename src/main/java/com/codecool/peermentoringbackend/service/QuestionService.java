@@ -10,6 +10,7 @@ import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,14 +46,7 @@ public class QuestionService {
         List<QuestionEntity> questionEntities = questionRepository.findAllDesc();
         List<PublicQuestionModel> publicQuestionModels = new ArrayList<>();
         for (QuestionEntity question : questionEntities) {
-            PublicQuestionModel publicQuestionModel = modelMapper.map(question, PublicQuestionModel.class);
-            publicQuestionModel.setUsername(question.getUser().getUsername());
-            publicQuestionModel.setUserId(question.getUser().getId());
-            publicQuestionModel.setNumberOfAnswers(question.getAnswers().size());
-            if(question.getVoters().contains(userEntity)){
-                publicQuestionModel.setVoted(true);
-            }
-            if(question.getUser().getUsername().equals(userEntity.getUsername())) publicQuestionModel.setMyQuestion(true);
+            PublicQuestionModel publicQuestionModel = mapEntityToPublicQuestionModel(question, userEntity);
             publicQuestionModels.add(publicQuestionModel);
         }
         return publicQuestionModels;
@@ -152,18 +146,13 @@ return true;
         return tagService.removeTechnologyTagFromQuestion(tagModel);
     }
 
-    public QuestionEntity getQuestionById(Long questionId, String usernameFromToken) {
+    public PublicQuestionModel getQuestionById(Long questionId, String usernameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
         Optional<QuestionEntity> questionEntityOptional = questionRepository.findById(questionId);
         if(questionEntityOptional.isPresent()){
             QuestionEntity questionEntity = questionEntityOptional.get();
-            questionEntity.setUserId_(questionEntity.getUser().getId());
-            questionEntity.setUsername(questionEntity.getUser().getUsername());
-            if(questionEntity.getVoters().contains(userEntity)){
-                questionEntity.setVoted(true);
-            }
-            if(questionEntity.getUser().getUsername().equals(userEntity.getUsername())) questionEntity.setMyQuestion(true);
-            return questionEntity;
+            PublicQuestionModel publicQuestionModel = mapEntityToPublicQuestionModel(questionEntity, userEntity);
+            return publicQuestionModel;
         } else {
             throw new NoSuchElementException("Question not found with Id " + questionId);
         }
@@ -185,5 +174,17 @@ return true;
             return false;
         }
 
+    }
+
+    private PublicQuestionModel mapEntityToPublicQuestionModel(QuestionEntity questionEntity, UserEntity userEntity){
+        PublicQuestionModel publicQuestionModel = modelMapper.map(questionEntity, PublicQuestionModel.class);
+        publicQuestionModel.setUsername(questionEntity.getUser().getUsername());
+        publicQuestionModel.setUserId(questionEntity.getUser().getId());
+        publicQuestionModel.setNumberOfAnswers(questionEntity.getAnswers().size());
+        if(questionEntity.getVoters().contains(userEntity)){
+            publicQuestionModel.setVoted(true);
+        }
+        if(questionEntity.getUser().getUsername().equals(userEntity.getUsername())) publicQuestionModel.setMyQuestion(true);
+        return publicQuestionModel;
     }
 }
