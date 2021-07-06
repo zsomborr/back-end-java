@@ -1,7 +1,6 @@
 package com.codecool.peermentoringbackend.entity;
 
 import com.codecool.peermentoringbackend.model.Module_;
-import com.codecool.peermentoringbackend.model.Rank;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -81,16 +80,16 @@ public class UserEntity {
     @EqualsAndHashCode.Exclude
     Set<ProjectEntity> projectTags = new HashSet<>();
 
-    @ManyToMany
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "voters")
     Set<QuestionEntity> votedQuestions = new HashSet<>();
 
-    @ManyToMany
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "voters")
     Set<AnswerEntity> votedAnswers = new HashSet<>();
 
     @Singular

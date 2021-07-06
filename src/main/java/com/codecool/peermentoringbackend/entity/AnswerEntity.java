@@ -2,7 +2,6 @@ package com.codecool.peermentoringbackend.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
@@ -46,7 +45,7 @@ public class AnswerEntity {
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "votedAnswers")
+    @ManyToMany
     Set<UserEntity> voters = new HashSet<>();
 
     @Column
