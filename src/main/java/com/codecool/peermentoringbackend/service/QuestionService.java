@@ -89,27 +89,6 @@ return true;
     }
 
 
-    public QAndAsModel getQuestionByIdAndAnswers(Long questionId, String usernameFromToken) {
-        UserEntity userEntity = userRepository.findDistinctByUsername(usernameFromToken);
-        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVoteDesc(questionId);
-        QuestionEntity questionEntityById = questionRepository.findQuestionEntityById(questionId);
-        if(questionEntityById.getVoters().contains(userEntity)){
-            questionEntityById.setVoted(true);
-        }
-        questionEntityById.setUserData();
-        if(questionEntityById.getUsername().equals(userEntity.getUsername())) questionEntityById.setMyQuestion(true);
-
-
-        for (AnswerEntity answer: answerEntities) {
-            answer.setTransientData();
-            if(answer.getUsername().equals(userEntity.getUsername())) answer.setMyAnswer(true);
-
-        }
-
-        return new QAndAsModel(questionEntityById, answerEntities);
-    }
-
-
     public boolean editQuestion(QModelWithId questionModel, Long questionId, String usernameFromToken) {
         boolean edited = false;
         try {
