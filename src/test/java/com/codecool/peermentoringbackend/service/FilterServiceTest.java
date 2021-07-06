@@ -11,6 +11,7 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -67,7 +68,8 @@ class FilterServiceTest {
 
     @BeforeEach
     public void setup(){
-        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService);
+        ModelMapper modelMapper = new ModelMapper();
+        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService, modelMapper);
 
         technologyEntityOne = TechnologyEntity.builder().technologyTag("tech1").build();
         technologyEntityTwo = TechnologyEntity.builder().technologyTag("tech2").build();
