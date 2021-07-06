@@ -46,7 +46,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{questionId}")
-    public QuestionEntity getQuestionById(HttpServletRequest request, @PathVariable Long questionId) {
+    public PublicQuestionModel getQuestionById(HttpServletRequest request, @PathVariable Long questionId) {
         String usernameFromToken = jwtTokenServices.getUsernameFromToken(request);
         return questionService.getQuestionById(questionId, usernameFromToken);
     }
