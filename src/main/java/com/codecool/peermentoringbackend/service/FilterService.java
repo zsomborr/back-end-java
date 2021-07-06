@@ -84,14 +84,16 @@ public class FilterService {
         return mentorsByAllTags;
     }
 
-    public List<UserEntity> filterForAllSpecificTags(List<UserEntity> userEntities,List<TechnologyEntity> technologies, List<ProjectEntity> projects){
-        List<UserEntity> results = new ArrayList<>();
+    public List<PublicUserModel> filterForAllSpecificTags(List<UserEntity> userEntities,List<TechnologyEntity> technologies, List<ProjectEntity> projects){
+        List<PublicUserModel> results = new ArrayList<>();
         for(UserEntity userEntity : userEntities){
             if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
-                results.add(userEntity);
+                PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
+                Rank rank = userService.getUserRank(userEntity.getId());
+                publicUserModel.setRank(rank);
+                results.add(publicUserModel);
             }
-            Rank rank = userService.getUserRank(userEntity.getId());
-            userEntity.setRank(rank);
+
         }
         return results;
     }

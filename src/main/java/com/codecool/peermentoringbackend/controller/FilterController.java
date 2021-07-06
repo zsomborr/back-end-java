@@ -22,7 +22,7 @@ public class FilterController {
     private FilterService filterService;
 
     @PostMapping("/get-mentors-by-tags")
-    public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
+    public List<PublicUserModel> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
         List<UserEntity> mentorsByTags = filterService.getMentorsByAllTags(projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
         return filterService.filterForAllSpecificTags(mentorsByTags, projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
     }
