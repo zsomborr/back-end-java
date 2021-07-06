@@ -4,9 +4,12 @@ import com.codecool.peermentoringbackend.entity.AnswerEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.AnswerModel;
 import com.codecool.peermentoringbackend.model.ApiResponse;
+import com.codecool.peermentoringbackend.model.PublicAnswerModel;
+import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.repository.AnswerRepository;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,27 +26,36 @@ public class AnswerService {
 
     private UserRepository userRepository;
 
+    private ModelMapper modelMapper;
+
     @Autowired
-    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository) {
+    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, UserRepository userRepository, ModelMapper modelMapper) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
 
-    public List<AnswerEntity> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
+    public List<PublicAnswerModel> getAllAnswersByQuestionId(Long questionId, String userNameFromToken) {
         UserEntity userEntity = userRepository.findDistinctByUsername(userNameFromToken);
         List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByQuestionIdOrderByVoteDesc(questionId);
-        for (AnswerEntity answer: answerEntities) {
-            answer.setTransientData();
-            if(answer.getVoters().contains(userEntity)){
-                answer.setVoted(true);
+        List<PublicAnswerModel> answers = new ArrayList<>();
+        for (AnswerEntity answerEntity: answerEntities) {
+            PublicAnswerModel publicAnswerModel = modelMapper.map(answerEntity, PublicAnswerModel.class);
+            publicAnswerModel.setUsername(answerEntity.getUser().getUsername());
+            publicAnswerModel.setUserId(answerEntity.getUser().getId());
+            publicAnswerModel.setQuestionId(answerEntity.getQuestion().getId());
+            publicAnswerModel.setQuestionTitle(answerEntity.getQuestion().getTitle());
+            if(answerEntity.getVoters().contains(userEntity)){
+                publicAnswerModel.setVoted(true);
             }
-            if(answer.getUsername().equals(userEntity.getUsername())) answer.setMyAnswer(true);
+            if(answerEntity.getUser().getUsername().equals(userEntity.getUsername())) publicAnswerModel.setMyAnswer(true);
+            answers.add(publicAnswerModel);
         }
-        return answerEntities
+        return answers
                 .stream()
-                .sorted(Comparator.comparing(AnswerEntity::isAccepted)
+                .sorted(Comparator.comparing(PublicAnswerModel::isAccepted)
                         .reversed())
                 .collect(Collectors.toList());
     }
