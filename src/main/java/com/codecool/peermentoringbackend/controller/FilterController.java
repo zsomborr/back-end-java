@@ -4,6 +4,7 @@ import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
 import com.codecool.peermentoringbackend.model.ProjectsAndTechs;
+import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.TagsModel;
 import com.codecool.peermentoringbackend.model.UserModel;
 import com.codecool.peermentoringbackend.service.FilterService;
@@ -21,7 +22,7 @@ public class FilterController {
     private FilterService filterService;
 
     @PostMapping("/get-mentors-by-tags")
-    public List<UserEntity> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
+    public List<PublicUserModel> getMentorsByTags(@RequestBody ProjectsAndTechs projectsAndTechs) {
         List<UserEntity> mentorsByTags = filterService.getMentorsByAllTags(projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
         return filterService.filterForAllSpecificTags(mentorsByTags, projectsAndTechs.getTechnologies(), projectsAndTechs.getProjects());
     }
@@ -29,12 +30,12 @@ public class FilterController {
 
 
     @GetMapping("/get-mentors")
-    private List<UserEntity> getAllMentors(){
+    private List<PublicUserModel> getAllMentors(){
         return filterService.getAllMentors();
     }
 
     @PostMapping("/get-mentor-by-name")
-    private UserEntity getMentorByName(@RequestBody UserModel userModel){
+    private PublicUserModel getMentorByName(@RequestBody UserModel userModel){
         return filterService.getMentorByName(userModel.getUsername());
     }
 

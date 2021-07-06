@@ -4,10 +4,12 @@ import com.codecool.peermentoringbackend.entity.ProjectEntity;
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
 import com.codecool.peermentoringbackend.entity.TechnologyEntity;
 import com.codecool.peermentoringbackend.entity.UserEntity;
+import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.model.Rank;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
 import com.codecool.peermentoringbackend.repository.TechnologyTagRepository;
 import com.codecool.peermentoringbackend.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,29 +26,35 @@ public class FilterService {
 
     private UserService userService;
 
+    private ModelMapper modelMapper;
+
     @Autowired
-    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository, UserService userService) {
+    public FilterService(UserRepository userRepository, QuestionRepository questionRepository, TechnologyTagRepository technologyTagRepository, UserService userService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
         this.technologyTagRepository = technologyTagRepository;
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
-    public List<UserEntity> getAllMentors() {
+    public List<PublicUserModel> getAllMentors() {
         List<UserEntity> techOrProjectTags = userRepository.getIfHasProjectOrTechTags();
+        List<PublicUserModel> mentors = new ArrayList<>();
         for(UserEntity userEntity: techOrProjectTags){
+            PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
             Rank rank = userService.getUserRank(userEntity.getId());
-            userEntity.setRank(rank);
+            publicUserModel.setRank(rank);
+            mentors.add(publicUserModel);
         }
-        if(!techOrProjectTags.isEmpty()){
-            return techOrProjectTags;
-        } else {
-            return new ArrayList<>();
-        }
+        return mentors;
     }
 
-    public UserEntity getMentorByName(String username) {
-        return userRepository.findDistinctByUsername(username);
+    public PublicUserModel getMentorByName(String username) {
+        UserEntity userEntity = userRepository.findDistinctByUsername(username);
+        PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
+        Rank rank = userService.getUserRank(userEntity.getId());
+        publicUserModel.setRank(rank);
+        return publicUserModel;
     }
 
 
@@ -73,21 +81,19 @@ public class FilterService {
         } else{
             mentorsByAllTags = userRepository.findAll();
         }
-        for(UserEntity userEntity: mentorsByAllTags){
-            Rank rank = userService.getUserRank(userEntity.getId());
-            userEntity.setRank(rank);
-        }
         return mentorsByAllTags;
     }
 
-    public List<UserEntity> filterForAllSpecificTags(List<UserEntity> userEntities,List<TechnologyEntity> technologies, List<ProjectEntity> projects){
-        List<UserEntity> results = new ArrayList<>();
+    public List<PublicUserModel> filterForAllSpecificTags(List<UserEntity> userEntities,List<TechnologyEntity> technologies, List<ProjectEntity> projects){
+        List<PublicUserModel> results = new ArrayList<>();
         for(UserEntity userEntity : userEntities){
             if(userEntity.getTechnologyTags().containsAll(technologies) && userEntity.getProjectTags().containsAll(projects)){
-                results.add(userEntity);
+                PublicUserModel publicUserModel = modelMapper.map(userEntity, PublicUserModel.class);
+                Rank rank = userService.getUserRank(userEntity.getId());
+                publicUserModel.setRank(rank);
+                results.add(publicUserModel);
             }
-            Rank rank = userService.getUserRank(userEntity.getId());
-            userEntity.setRank(rank);
+
         }
         return results;
     }
