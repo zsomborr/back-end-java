@@ -49,6 +49,8 @@ public class QuestionServiceTest {
     private TechnologyTagRepository technologyTagRepository;
 
     @Autowired
+    private ModelMapper modelMapper;
+
     private MapperService mapperService;
 
     private UserEntity userEntity;
@@ -66,6 +68,7 @@ public class QuestionServiceTest {
 
     @BeforeEach
     public void init(){
+        mapperService = new MapperService(modelMapper);
         questionService = new QuestionService(questionRepository, answerRepository, userRepository, technologyTagRepository, tagService, mapperService);
 
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();

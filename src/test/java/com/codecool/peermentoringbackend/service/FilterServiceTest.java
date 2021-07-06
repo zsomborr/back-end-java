@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -43,6 +44,8 @@ class FilterServiceTest {
     private UserService userService;
 
     @Autowired
+    private ModelMapper modelMapper;
+
     private MapperService mapperService;
 
     private FilterService filterService;
@@ -71,6 +74,7 @@ class FilterServiceTest {
 
     @BeforeEach
     public void setup(){
+        mapperService = new MapperService(modelMapper);
         filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService, mapperService);
 
         technologyEntityOne = TechnologyEntity.builder().technologyTag("tech1").build();

@@ -10,6 +10,7 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,6 +41,8 @@ class AnswerServiceTest {
     private UserRepository userRepository;
 
     @Autowired
+    private ModelMapper modelMapper;
+
     private MapperService mapperService;
 
     private AnswerService answerService;
@@ -55,6 +58,7 @@ class AnswerServiceTest {
 
     @BeforeEach
     public void setup(){
+        mapperService = new MapperService(modelMapper);
         answerService = new AnswerService(answerRepository,questionRepository, userRepository, mapperService);
         userEntity = UserEntity.builder().username("testuser").id(1L).email("testuser@email.com").password("password").build();
         questionEntity = QuestionEntity.builder().user(userEntity).build();
