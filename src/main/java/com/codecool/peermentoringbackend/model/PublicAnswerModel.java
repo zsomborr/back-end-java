@@ -32,4 +32,6 @@ public class PublicAnswerModel {
     private boolean voted;
 
     private boolean myAnswer;
+
+    private boolean accepted;
 }
