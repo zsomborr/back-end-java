@@ -166,8 +166,10 @@ public class UserService {
     }
 
     public Rank getUserRank(Long userId){
-        Long score = userRepository.getUserScore(userId);
-        Optional<Rank> rankOptional = Rank.getRankByScore(score);
+        Long questionScore = userRepository.getUserQuestionScore(userId);
+        Long answerScore = userRepository.getUserAnswerScore(userId);
+        Long totalScore = questionScore + answerScore;
+        Optional<Rank> rankOptional = Rank.getRankByScore(totalScore);
         return rankOptional.orElse(Rank.NOVICE);
     }
 
