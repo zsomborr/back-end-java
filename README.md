@@ -32,7 +32,7 @@ In deployed application set PROFILE to "production", HIBERNATE_DDL to "update".
 
 ### Testing
 
-Tests are using and H2 database. Setup environment variables in application-test.properties:
+Tests are using an H2 database. Setup environment variables in application-test.properties:
 ```
 spring.datasource.url=jdbc:h2:mem:testdb;MODE=PostgreSQL
 spring.datasource.username=sa
