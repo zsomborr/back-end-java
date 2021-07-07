@@ -109,7 +109,7 @@ public class TagService {
     public TagsModel getAllTags() {
 
         List<ProjectEntity> projectTags = projectTagRepository.findAll();
-        List<TechnologyEntity> technologyTags = technologyTagRepository.findAll();
+        List<TechnologyEntity> technologyTags = technologyTagRepository.findAllByOrderByTechnologyTag();
 
         return new TagsModel(projectTags, technologyTags);
     }
@@ -139,6 +139,6 @@ public class TagService {
     }
 
     public List<TechnologyEntity> getAllTechnologyTag() {
-        return technologyTagRepository.findAll();
+        return technologyTagRepository.findAllByOrderByTechnologyTag();
     }
 }

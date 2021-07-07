@@ -14,4 +14,6 @@ public interface TechnologyTagRepository extends JpaRepository<TechnologyEntity,
     TechnologyEntity findTechnologyEntityByTechnologyTag(String technologyTag);
 
     List<TechnologyEntity> findTechnologyEntitiesByUserEntities(UserEntity userEntity);
+
+    List<TechnologyEntity> findAllByOrderByTechnologyTag();
 }
