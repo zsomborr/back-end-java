@@ -39,6 +39,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u from UserEntity u join fetch u.answers a where a.id = :answerId ")
     UserEntity findUserEntityByAnswerId(@Param("answerId") Long answerId);
 
-    @Query("SELECT COUNT(qe.vote) + count(ae.vote) AS votes FROM UserEntity u LEFT JOIN AnswerEntity ae on u.id = ae.user.id LEFT JOIN QuestionEntity qe on u.id = qe.user.id WHERE u.id = :userId GROUP BY u.id")
-    Long getUserScore(Long userId);
+    @Query("SELECT COALESCE(SUM(qe.vote), 0) AS vote FROM UserEntity ue LEFT JOIN QuestionEntity qe on ue.id = qe.user.id WHERE ue.id = :userId GROUP BY ue.id")
+    Long getUserQuestionScore(Long userId);
+
+    @Query("SELECT COALESCE(SUM(ae.vote), 0) AS vote FROM UserEntity ue LEFT JOIN AnswerEntity ae on ue.id = ae.user.id WHERE ue.id = :userId GROUP BY ue.id")
+    Long getUserAnswerScore(Long userId);
 }
