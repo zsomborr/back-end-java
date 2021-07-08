@@ -38,14 +38,18 @@ public class ForgottenPasswordService {
             throw new NoSuchElementException("User with email " + email + " not found!");
         }
         UserEntity userEntity = userEntityOptional.get();
-        int min = 100000;
-        int max = 999999;
-        int randomNumber = random.nextInt(max - min) + min;
+        int randomNumber = getRandomNumber();
         ForgottenPasswordCodeEntity code = ForgottenPasswordCodeEntity.builder().user(userEntity).code(randomNumber).build();
         forgottenPasswordCodeRepository.save(code);
         String message = String.format("Password forgotten. Use code to set new password. Code: %d", randomNumber);
         emailSenderService.sendMail(email, message, "Forgotten password");
         return true;
+    }
+
+    private int getRandomNumber() {
+        int min = 100000;
+        int max = 999999;
+        return random.nextInt(max - min) + min;
     }
 
     public boolean saveNewPassword(Map<String, String> body) throws CredentialException {
