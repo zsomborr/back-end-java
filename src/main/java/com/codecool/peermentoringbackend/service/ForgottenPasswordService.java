@@ -39,7 +39,14 @@ public class ForgottenPasswordService {
         }
         UserEntity userEntity = userEntityOptional.get();
         int randomNumber = getRandomNumber();
-        ForgottenPasswordCodeEntity code = ForgottenPasswordCodeEntity.builder().user(userEntity).code(randomNumber).build();
+        Optional<ForgottenPasswordCodeEntity> codeOptional = forgottenPasswordCodeRepository.findByUser(userEntity);
+        ForgottenPasswordCodeEntity code;
+        if(codeOptional.isPresent()){
+            code = codeOptional.get();
+            code.setCode(randomNumber);
+        } else {
+            code = ForgottenPasswordCodeEntity.builder().user(userEntity).code(randomNumber).build();
+        }
         forgottenPasswordCodeRepository.save(code);
         String message = String.format("Password forgotten. Use code to set new password. Code: %d", randomNumber);
         emailSenderService.sendMail(email, message, "Forgotten password");
