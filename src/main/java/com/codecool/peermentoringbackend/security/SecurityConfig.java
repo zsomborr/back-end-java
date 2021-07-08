@@ -57,6 +57,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
                 .antMatchers("/auth/logout").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/auth/login").permitAll()
+                .antMatchers("/auth/forgotten-password/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/reg/registration").permitAll()
 
 

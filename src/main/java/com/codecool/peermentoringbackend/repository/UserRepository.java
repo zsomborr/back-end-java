@@ -44,4 +44,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Query("SELECT COALESCE(SUM(ae.vote), 0) AS vote FROM UserEntity ue LEFT JOIN AnswerEntity ae on ue.id = ae.user.id WHERE ue.id = :userId GROUP BY ue.id")
     Long getUserAnswerScore(Long userId);
+
+    Optional<UserEntity> findByEmail(String email);
 }
