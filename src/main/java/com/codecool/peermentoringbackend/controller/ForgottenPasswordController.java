@@ -3,12 +3,16 @@ package com.codecool.peermentoringbackend.controller;
 import com.codecool.peermentoringbackend.model.ApiResponse;
 import com.codecool.peermentoringbackend.service.ForgottenPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController()
 @RequestMapping("/auth/forgotten-password")
+@CrossOrigin(origins = {"http://localhost:3000", "https://peermentor-frontend.netlify.app", "https://peermentor-analytics.netlify.app"}, allowCredentials = "true")
 public class ForgottenPasswordController {
 
     private ForgottenPasswordService forgottenPasswordService;
@@ -19,8 +23,14 @@ public class ForgottenPasswordController {
     }
 
     @PostMapping(path = "/")
-    public ApiResponse forgotPassword(@RequestBody String email){
+    public ResponseEntity<ApiResponse> forgotPassword(@RequestBody Map<String, String> body){
         ApiResponse apiResponse = new ApiResponse();
+        if(!body.containsKey("email")){
+            apiResponse.setSuccess(false);
+            apiResponse.setMessage("Invalid arguments!");
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+        String email = body.get("email");
         try{
             forgottenPasswordService.forgotPassword(email);
             apiResponse.setSuccess(true);
@@ -28,8 +38,9 @@ public class ForgottenPasswordController {
         } catch (NoSuchElementException e){
             apiResponse.setSuccess(false);
             apiResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
-        return apiResponse;
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
 }
