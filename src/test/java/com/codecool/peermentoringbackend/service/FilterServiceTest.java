@@ -11,6 +11,7 @@ import com.codecool.peermentoringbackend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -37,6 +39,14 @@ class FilterServiceTest {
 
     @Autowired
     private ProjectTagRepository projectTagRepository;
+
+    @MockBean
+    private UserService userService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    private MapperService mapperService;
 
     private FilterService filterService;
 
@@ -64,7 +74,8 @@ class FilterServiceTest {
 
     @BeforeEach
     public void setup(){
-        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository);
+        mapperService = new MapperService(modelMapper);
+        filterService = new FilterService(userRepository, questionRepository, technologyTagRepository, userService, mapperService);
 
         technologyEntityOne = TechnologyEntity.builder().technologyTag("tech1").build();
         technologyEntityTwo = TechnologyEntity.builder().technologyTag("tech2").build();

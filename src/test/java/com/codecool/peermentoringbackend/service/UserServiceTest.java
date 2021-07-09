@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,6 +51,12 @@ class UserServiceTest {
     @MockBean
     private DiscordRepository discordRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    private MapperService mapperService;
+
+
 
     private UserEntity userEntity;
 
@@ -56,7 +64,8 @@ class UserServiceTest {
 
     @BeforeAll
     public void init(){
-        userService = new UserService(userRepository, projectTagRepository, technologyTagRepository, jwtTokenServices, questionRepository, answerRepository, discordRepository);
+        mapperService = new MapperService(modelMapper);
+        userService = new UserService(userRepository, projectTagRepository, technologyTagRepository, jwtTokenServices, questionRepository, answerRepository, discordRepository, mapperService);
         userEntity = UserEntity.builder().username("testuser").email("testuser@email.com").password("password").build();
         userEntity = userRepository.save(userEntity);
     }

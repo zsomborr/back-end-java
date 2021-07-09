@@ -4,6 +4,7 @@ import com.codecool.peermentoringbackend.entity.*;
 import com.codecool.peermentoringbackend.model.*;
 import com.codecool.peermentoringbackend.repository.*;
 import com.codecool.peermentoringbackend.security.JwtTokenServices;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -18,32 +19,24 @@ import java.util.*;
 @Service
 public class UserService {
 
-//    @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
     private ProjectTagRepository projectTagRepository;
 
-//    @Autowired
     TechnologyTagRepository technologyTagRepository;
 
-//    @Autowired
     JwtTokenServices jwtTokenServices;
 
-//    @Autowired
     QuestionRepository questionRepository;
 
-//    @Autowired
     AnswerRepository answerRepository;
 
-//    @Autowired
     DiscordRepository discordRepository;
 
-//    @PersistenceContext
-//    private EntityManager entityManager;
+    private MapperService mapperService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ProjectTagRepository projectTagRepository, TechnologyTagRepository technologyTagRepository, JwtTokenServices jwtTokenServices, QuestionRepository questionRepository, AnswerRepository answerRepository, DiscordRepository discordRepository) {
+    public UserService(UserRepository userRepository, ProjectTagRepository projectTagRepository, TechnologyTagRepository technologyTagRepository, JwtTokenServices jwtTokenServices, QuestionRepository questionRepository, AnswerRepository answerRepository, DiscordRepository discordRepository, MapperService mapperService) {
         this.userRepository = userRepository;
         this.projectTagRepository = projectTagRepository;
         this.technologyTagRepository = technologyTagRepository;
@@ -51,47 +44,22 @@ public class UserService {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.discordRepository = discordRepository;
+        this.mapperService = mapperService;
     }
 
     public PublicUserModel getPublicUserDataByUserId(Long userId) {
         UserEntity userEntity = userRepository.findDistinctById(userId);
 
         if(userEntity == null) return null;
-
-        List<ProjectEntity> projectTags = projectTagRepository.findProjectEntitiesByUserEntities(userEntity);
-        List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
         DiscordEntity discordEntity = discordRepository.getByUserId(userId);
-        if(discordEntity == null){
-            return PublicUserModel.builder()
-                    .firstName(userEntity.getFirstName())
-                    .lastName(userEntity.getLastName())
-                    .city(userEntity.getCity())
-                    .country(userEntity.getCountry())
-                    .module(userEntity.getModule())
-                    .username(userEntity.getUsername())
-                    .email(userEntity.getEmail())
-                    .projectTags(projectTags)
-                    .technologyTags(technologyTags)
-                    .build();
-
-        } else{
-            return PublicUserModel.builder()
-                    .firstName(userEntity.getFirstName())
-                    .lastName(userEntity.getLastName())
-                    .city(userEntity.getCity())
-                    .country(userEntity.getCountry())
-                    .module(userEntity.getModule())
-                    .username(userEntity.getUsername())
-                    .email(userEntity.getEmail())
-                    .projectTags(projectTags)
-                    .technologyTags(technologyTags)
-                    .discordId(discordEntity.getDiscordId())
-                    .discordUsername(discordEntity.getDiscordUsername())
-                    .discriminator(discordEntity.getDiscriminator())
-                    .build();
+        Rank rank = getUserRank(userId);
+        PublicUserModel publicUserModel = mapperService.mapEntityToPublicUserModel(userEntity, rank);
+        if(discordEntity != null){
+            publicUserModel.setDiscordId(discordEntity.getDiscordId());
+            publicUserModel.setDiscordUsername(discordEntity.getDiscordUsername());
+            publicUserModel.setDiscriminator(discordEntity.getDiscriminator());
         }
-
-
+        return publicUserModel;
     }
 
     public LoggedUserModel getLoggedInUserData(HttpServletRequest request) {
@@ -101,6 +69,7 @@ public class UserService {
         List<TechnologyEntity> technologyTags = technologyTagRepository.findTechnologyEntitiesByUserEntities(userEntity);
         DiscordEntity discordEntity = discordRepository.getByUserId(userEntity.getId());
         if(discordEntity== null){
+
             return LoggedUserModel.builder()
                     .firstName(userEntity.getFirstName())
                     .lastName(userEntity.getLastName())
@@ -162,16 +131,11 @@ public class UserService {
     public UserDataQAndAModel getLoggedInUserPage(HttpServletRequest request) {
         String username = jwtTokenServices.getUsernameFromToken(request);
         UserEntity userEntity = userRepository.findDistinctByUsername(username);
-        List<QuestionEntity> userQuestions = questionRepository.findQuestionEntitiesByUser(userEntity);
+        List<QuestionEntity> questionEntities = questionRepository.findQuestionEntitiesByUser(userEntity);
+        List<PublicQuestionModel> userQuestions = mapperService.mapQuestionEntityCollection(questionEntities, userEntity);
+        List<AnswerEntity> answerEntities = answerRepository.findAnswerEntitiesByUser(userEntity);
+        List<PublicAnswerModel> userAnswers = mapperService.mapAnswerEntityCollection(answerEntities, userEntity);
 
-        for (QuestionEntity question : userQuestions) {
-            question.setUserData();
-        }
-        List<AnswerEntity> userAnswers = answerRepository.findAnswerEntitiesByUser(userEntity);
-
-        for (AnswerEntity answer : userAnswers) {
-            answer.setTransientData();
-        }
         return UserDataQAndAModel.builder()
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
@@ -199,6 +163,14 @@ public class UserService {
             return true;
         }
 
+    }
+
+    public Rank getUserRank(Long userId){
+        Long questionScore = userRepository.getUserQuestionScore(userId);
+        Long answerScore = userRepository.getUserAnswerScore(userId);
+        Long totalScore = questionScore + answerScore;
+        Optional<Rank> rankOptional = Rank.getRankByScore(totalScore);
+        return rankOptional.orElse(Rank.NOVICE);
     }
 
 

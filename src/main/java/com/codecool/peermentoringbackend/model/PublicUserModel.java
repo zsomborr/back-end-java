@@ -15,6 +15,8 @@ import java.util.List;
 @Builder
 public class PublicUserModel {
 
+    private Long id;
+
     private String firstName;
 
     private String lastName;
@@ -38,4 +40,6 @@ public class PublicUserModel {
     private String discordUsername;
 
     private Long discriminator;
+
+    private Rank rank;
 }

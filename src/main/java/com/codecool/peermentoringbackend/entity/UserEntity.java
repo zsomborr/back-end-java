@@ -80,16 +80,16 @@ public class UserEntity {
     @EqualsAndHashCode.Exclude
     Set<ProjectEntity> projectTags = new HashSet<>();
 
-    @ManyToMany
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "voters")
     Set<QuestionEntity> votedQuestions = new HashSet<>();
 
-    @ManyToMany
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "voters")
     Set<AnswerEntity> votedAnswers = new HashSet<>();
 
     @Singular

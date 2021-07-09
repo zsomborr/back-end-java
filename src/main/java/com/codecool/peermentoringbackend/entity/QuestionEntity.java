@@ -1,9 +1,8 @@
 package com.codecool.peermentoringbackend.entity;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -51,21 +50,6 @@ public class QuestionEntity {
     @JsonIgnore
     Set<AnswerEntity> answers = new HashSet<>();
 
-    @Transient
-    private int numberOfAnswers;
-
-    @Transient
-    private Long userId_;
-
-    @Transient
-    private String username;
-
-    @Transient
-    private boolean voted;
-
-    @Transient
-    private boolean myQuestion;
-
     @ManyToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -74,17 +58,8 @@ public class QuestionEntity {
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "votedQuestions")
+    @ManyToMany
     Set<UserEntity> voters = new HashSet<>();
-
-    public void setUserData() {
-        this.userId_ = user.getId();
-        this.username = user.getUsername();
-    }
-
-    public void setVoterData() {
-        this.voted = true;
-    }
 
     public void addUser(UserEntity userEntity) {
         this.voters.add(userEntity);

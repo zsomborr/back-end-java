@@ -1,7 +1,10 @@
 package com.codecool.peermentoringbackend.service;
 
 import com.codecool.peermentoringbackend.entity.QuestionEntity;
+import com.codecool.peermentoringbackend.model.PublicQuestionModel;
+import com.codecool.peermentoringbackend.model.PublicUserModel;
 import com.codecool.peermentoringbackend.repository.QuestionRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,23 +16,21 @@ import java.util.*;
 public class SearchService {
 
     private QuestionRepository questionRepository;
+    private MapperService mapperService;
 
     @Autowired
-    public SearchService(QuestionRepository questionRepository) {
+    public SearchService(QuestionRepository questionRepository, MapperService mapperService) {
         this.questionRepository = questionRepository;
+        this.mapperService = mapperService;
     }
 
-    public List<QuestionEntity> search(List<String> words){
-        List<QuestionEntity> questions = new ArrayList<>();
+    public List<PublicQuestionModel> search(List<String> words){
+        List<PublicQuestionModel> questions = new ArrayList<>();
         for (String word : words) {
             Optional<List<QuestionEntity>> distinctByTitleLikeOrDescriptionLike = questionRepository.findDistinctByTitleContainingOrDescriptionContaining(word, word);
             if (distinctByTitleLikeOrDescriptionLike.isPresent()){
                 List<QuestionEntity> questionEntities = distinctByTitleLikeOrDescriptionLike.get();
-                for (QuestionEntity questionEntity : questionEntities) {
-                    questionEntity.setUserData();
-                    questionEntity.setNumberOfAnswers(questionEntity.getAnswers().size());
-                    questions.add(questionEntity);
-                }
+                questions = mapperService.mapQuestionEntityCollection(questionEntities);
             }
         }
         return questions;
